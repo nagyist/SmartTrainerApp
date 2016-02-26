@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">smarttrainer</string>
 
+    <string name="facebook_app_id">1680549882220393</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>

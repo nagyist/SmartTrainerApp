@@ -10,8 +10,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        /*super.onCreate(savedInstanceState);
-        if (ExistingUser.getUserName(MainActivity.this).length() == 0){
+        super.onCreate(savedInstanceState);
+        /*if (ExistingUser.getUserName(MainActivity.this).length() == 0){
             Intent toLogin = new Intent();
             toLogin.setClass(MainActivity.this, LoginActivity.class);
             startActivityForResult(toLogin, 0);
@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
                 ExistingUser.getUserName(MainActivity.this),
                 Toast.LENGTH_SHORT).show();*/
         setContentView(R.layout.activity_main);
-        
+        Intent toWork = new Intent();
+        toWork.setClass(MainActivity.this, Workout.class);
+        startActivity(toWork);
     }
 }
