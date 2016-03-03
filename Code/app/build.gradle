@@ -25,5 +25,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
+    compile 'com.mcxiaoke.volley:library:1.0.19'
     compile files('libs/microsoft-band-1.3.20105.2.jar')
 }

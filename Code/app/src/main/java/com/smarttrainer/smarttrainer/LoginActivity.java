@@ -3,11 +3,10 @@ package com.smarttrainer.smarttrainer;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
 import android.content.CursorLoader;
@@ -19,7 +18,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,12 +27,16 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -41,12 +44,13 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import org.json.JSONObject;
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -78,7 +82,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_login);
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        /*mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -103,7 +107,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-
+        */
         // fb login
         callbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = (LoginButton) findViewById(R.id.fb_login_button);
@@ -111,22 +115,44 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // App code
-                //Toast.makeText(getApplicationContext(),"User ID: " + loginResult.getAccessToken().getUserId() + "\n" + "Token: " + loginResult.getAccessToken().getToken(),Toast.LENGTH_SHORT).show();
                 ExistingUser.setUserName(LoginActivity.this, loginResult.getAccessToken().getUserId());
                 Intent sendBack = new Intent();
                 sendBack.putExtra("ID", loginResult.getAccessToken().getUserId());
                 setResult(RESULT_OK, sendBack);
+                Log.d("debugging", "id:" + loginResult.getAccessToken().getUserId() + " &token="
+                        + loginResult.getAccessToken().getToken());
+                String loginUrl = "http://smarttrainer.ddns.net:8000/login?user_id="
+                        + loginResult.getAccessToken().getUserId() + "&token="
+                        + loginResult.getAccessToken().getToken() + "&service=facebook";
+                RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.this);
+                JsonObjRequest jsObjRequest = new JsonObjRequest(loginUrl, null,
+                    new Response.Listener<JSONObject>() {
+                    @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d("debugging", "to server success");
+                            Toast.makeText(getApplicationContext(), "Response: " + response.toString(),Toast.LENGTH_SHORT).show();
+                        }
+                    },
+                    new Response.ErrorListener() {
+                    @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getApplicationContext(), "Failed to connect the server",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                requestQueue.add(jsObjRequest);
                 finish();
             }
 
             @Override
             public void onCancel() {
-                // App code
+                // TODO: provide feedback
+                // TODO:
             }
 
             @Override
             public void onError(FacebookException exception) {
-                // App code
+                // TODO: provide feedback
+                // TODO:
             }
         });
     }
@@ -137,6 +163,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+    /*
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
@@ -169,7 +196,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     /**
      * Callback received when a permissions request has been completed.
-     */
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -185,7 +212,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
-     */
+
     private void attemptLogin() {
         if (mAuthTask != null) {
             return;

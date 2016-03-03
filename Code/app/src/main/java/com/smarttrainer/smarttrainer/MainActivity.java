@@ -4,19 +4,27 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*if (ExistingUser.getUserName(MainActivity.this).length() == 0){
+        if (ExistingUser.getUserName(MainActivity.this).length() == 0){
             Intent toLogin = new Intent();
             toLogin.setClass(MainActivity.this, LoginActivity.class);
             startActivityForResult(toLogin, 0);
         }
-
         setContentView(R.layout.activity_main);
     }
 
@@ -25,10 +33,10 @@ public class MainActivity extends AppCompatActivity {
         String UID = data.getExtras().getString("ID");
         Toast.makeText(getApplicationContext(),
                 ExistingUser.getUserName(MainActivity.this),
-                Toast.LENGTH_SHORT).show();*/
-        setContentView(R.layout.activity_main);
+                Toast.LENGTH_SHORT).show();
+        /*setContentView(R.layout.activity_main);
         Intent toWork = new Intent();
         toWork.setClass(MainActivity.this, Workout.class);
-        startActivity(toWork);
+        startActivity(toWork);*/
     }
 }
