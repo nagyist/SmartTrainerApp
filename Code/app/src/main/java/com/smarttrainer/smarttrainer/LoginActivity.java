@@ -129,8 +129,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                     new Response.Listener<JSONObject>() {
                     @Override
                         public void onResponse(JSONObject response) {
-                            Log.d("debugging", "to server success");
-                            Toast.makeText(getApplicationContext(), "Response: " + response.toString(),Toast.LENGTH_SHORT).show();
+                            //Log.d("debugging", "to server success");
+                            //Toast.makeText(getApplicationContext(), "Response: " + response.toString(),Toast.LENGTH_SHORT).show();
+                            Intent toSum = new Intent();
+                            toSum.setClass(LoginActivity.this, SumActivity.class);
+                            startActivityForResult(toSum, 0);
                         }
                     },
                     new Response.ErrorListener() {
