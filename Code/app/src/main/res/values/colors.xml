@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#a20000</color>
     <color name="colorAccent">#FFFFFF</color>
     <color name="tabgrey">#B6B6B6</color>
+    <color name="lightGray">#B4B4B4</color>
 </resources>

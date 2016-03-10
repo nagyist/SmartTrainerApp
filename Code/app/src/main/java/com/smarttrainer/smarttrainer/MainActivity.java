@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
             Intent toLogin = new Intent();
             toLogin.setClass(MainActivity.this, LoginActivity.class);
             startActivityForResult(toLogin, 0);
-        }*/
+        }*/ //Normal route
         Intent toSum = new Intent();
         toSum.setClass(MainActivity.this, SumActivity.class);
         startActivity(toSum);
@@ -35,10 +35,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         String UID = data.getExtras().getString("ID");
-        Toast.makeText(getApplicationContext(),
+        /*Toast.makeText(getApplicationContext(),
                 ExistingUser.getUserName(MainActivity.this),
                 Toast.LENGTH_SHORT).show();
-        /*setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
         Intent toWork = new Intent();
         toWork.setClass(MainActivity.this, Workout.class);
         startActivity(toWork);*/
