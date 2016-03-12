@@ -73,6 +73,7 @@ public class InstrActivity extends AppCompatActivity {
                                 "than shoulder-width grip, wrapping thumbs around" +
                                 "the bar. Hold the barbell at arm’s length above your" +
                                 "upper-chest area.";
+                        tts.setSpeechRate((float) 0.7);
                         tts.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
                     }
                 }

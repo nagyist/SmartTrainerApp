@@ -154,7 +154,7 @@
             android:layout_height="wrap_content"
             android:scaleType="centerInside"
             android:adjustViewBounds="true"
-            android:src="@drawable/exer_list_pushup"
+            android:src="@drawable/exer_list_benchpress"
             android:layout_weight="1"/>
     </LinearLayout>
 </LinearLayout>
