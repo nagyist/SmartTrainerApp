@@ -24,11 +24,13 @@ public class MainActivity extends AppCompatActivity {
             Intent toLogin = new Intent();
             toLogin.setClass(MainActivity.this, LoginActivity.class);
             startActivityForResult(toLogin, 0);
-        }*/ //Normal route
-        Intent toSum = new Intent();
-        toSum.setClass(MainActivity.this, SumActivity.class);
-        startActivity(toSum);
-
+        }
+        else
+        {*/
+            Intent toSum = new Intent();
+            toSum.setClass(MainActivity.this, SumActivity.class);
+            startActivity(toSum);
+        //}
         setContentView(R.layout.activity_main);
     }
 

@@ -38,7 +38,11 @@
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity android:name=".Workout" />
-        <activity android:name=".SumActivity"></activity>
+        <activity android:name=".SumActivity" />
+        <activity
+            android:name=".InstrActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        </activity>
     </application>
 
 </manifest>
