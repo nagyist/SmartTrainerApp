@@ -24,6 +24,7 @@ public class Workout extends Activity {
     private BandClient client = null;
     private Button btnStart;
     private TextView txtStatus;
+    private boolean writeToConsoleEnabled = false;
 
     private double curAx = 0;
     private double curAy = 0;
@@ -31,8 +32,9 @@ public class Workout extends Activity {
     Handler runner = new Handler();
     Runnable writeLog = new Runnable(){
         public void run(){
-            Log.i("accel", curAx + " " + curAy + " " + curAz);
-            runner.postDelayed( this, 20 );
+//            Log.i("accel", curAx + " " + curAy + " " + curAz);
+            writeToConsole(String.format(" %.3f , %.3f , %.3f", curAx, curAy, curAz));
+            runner.postDelayed( this, 50 );
         }
     };
 
@@ -43,10 +45,17 @@ public class Workout extends Activity {
                 curAx = event.getAccelerationX();
                 curAy = event.getAccelerationY();
                 curAz = event.getAccelerationZ();
-                appendToUI(String.format(" X = %.3f \n Y = %.3f\n Z = %.3f", curAx, curAy, curAz));
+//                writeToConsole(String.format(" %.3f , %.3f , %.3f", curAx, curAy, curAz));
+//                appendToUI(String.format(" X = %.3f \n Y = %.3f\n Z = %.3f", curAx, curAy, curAz));
             }
         }
     };
+
+    private void writeToConsole(String content){
+        if(writeToConsoleEnabled){
+            System.out.println(content);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +67,27 @@ public class Workout extends Activity {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                txtStatus.setText("");
-                new AccelerometerSubscriptionTask().execute();
+                if (!writeToConsoleEnabled) {
+                    txtStatus.setText("");
+                    btnStart.setText("Stop");
+                    writeToConsole("Start reading:");
+                    new AccelerometerSubscriptionTask().execute();
+                    runner.postDelayed(writeLog, 500);
+                } else {
+                    try {
+                        runner.removeCallbacks(writeLog);
+                        client.getSensorManager().unregisterAccelerometerEventListener(mAccelerometerEventListener);
+                        writeToConsole("Stop reading.");
+                        btnStart.setText("Start");
+                    } catch (BandIOException e) {
+                        appendToUI(e.getMessage());
+                    }
+                }
+                writeToConsoleEnabled = !writeToConsoleEnabled;
             }
         });
 
-        runner.postDelayed(writeLog, 500);
+
     }
 
     @Override
