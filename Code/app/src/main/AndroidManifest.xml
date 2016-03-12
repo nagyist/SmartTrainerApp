@@ -41,11 +41,8 @@
         <activity android:name=".SumActivity" />
         <activity
             android:name=".InstrActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
-        <activity
-            android:name=".ExerActivity"
-            android:label="@string/title_activity_exer"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".ExerActivity"></activity>
     </application>
 
 </manifest>
