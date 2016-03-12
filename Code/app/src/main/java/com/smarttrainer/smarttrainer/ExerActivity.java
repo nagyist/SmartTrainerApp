@@ -20,6 +20,7 @@ import com.microsoft.band.ConnectionState;
 import com.microsoft.band.sensors.BandAccelerometerEvent;
 import com.microsoft.band.sensors.BandAccelerometerEventListener;
 import com.microsoft.band.sensors.SampleRate;
+import com.smarttrainer.smarttrainer.models.MotionJudge;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,15 +34,15 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private double curAy = 0;
     private double curAz = 0;
 
-    List<List<Double>> ls;
+    List<double[]> ls;
 
     Handler recorder = new Handler();
     Runnable writeArray = new Runnable(){
         public void run(){
-            List<Double> cur = new ArrayList<>();
-            cur.add(curAx);
-            cur.add(curAy);
-            cur.add(curAz);
+            double[] cur = new double[3];
+            cur[0] = curAx;
+            cur[1] = curAy;
+            cur[2] = curAz;
             ls.add(cur);
             runner.postDelayed( this, 50 );
         }
@@ -58,14 +59,16 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         }
     };
 
+
+    MotionJudge mj;
     private TextToSpeech tts;
     private static final int TTS_REQUEST_CODE = 903;
     private Handler runner = new Handler();
     Runnable testExer = new Runnable(){
         public void run(){
-            appendToUI(String.format(" X = %.3f \n Y = %.3f\n Z = %.3f", curAx, curAy, curAz));
-            String toSpeak = "Yo, Man!";
+            String toSpeak = mj.judgeMotion(ls, 0);
             tts.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+
             ls.clear();
             runner.postDelayed( this, 6000 );
         }
@@ -85,11 +88,17 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
             @Override
             public void onClick(View v) {
                 runner.removeCallbacks(testExer);
+                recorder.removeCallbacks(writeArray);
+                appendToUI(String.format("You complete %.3f this time", mj.getCount()));
+                mj.reset();
             }
         });
 
-        ls = new ArrayList<List<Double>>(4096);
+        ls = new ArrayList<double[]>(4096);
         recorder.postDelayed(writeArray, 50);
+
+        // TODO: mj = new BenchJudge();
+
     }
 
     private class AccelerometerSubscriptionTask extends AsyncTask<Void, Void, Void> {
