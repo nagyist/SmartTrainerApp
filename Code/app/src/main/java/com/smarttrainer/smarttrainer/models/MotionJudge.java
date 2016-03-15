@@ -1,6 +1,5 @@
 package com.smarttrainer.smarttrainer.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
