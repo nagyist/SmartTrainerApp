@@ -20,6 +20,7 @@ import com.microsoft.band.ConnectionState;
 import com.microsoft.band.sensors.BandAccelerometerEvent;
 import com.microsoft.band.sensors.BandAccelerometerEventListener;
 import com.microsoft.band.sensors.SampleRate;
+import com.smarttrainer.smarttrainer.models.BenchJudge;
 import com.smarttrainer.smarttrainer.models.MotionJudge;
 
 import java.util.ArrayList;
@@ -67,6 +68,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
     Runnable testExer = new Runnable(){
         public void run(){
             String toSpeak = mj.judgeMotion(ls, 0);
+            Log.d("toSpeak", toSpeak);
             tts.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
 
             ls.clear();
@@ -89,7 +91,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
             public void onClick(View v) {
                 runner.removeCallbacks(testExer);
                 recorder.removeCallbacks(writeArray);
-                appendToUI(String.format("You complete %.3f this time", mj.getCount()));
+                appendToUI(String.format("You complete %d this time", mj.getCount()));
                 mj.reset();
             }
         });
@@ -97,7 +99,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         ls = new ArrayList<double[]>(4096);
         recorder.postDelayed(writeArray, 50);
 
-        // TODO: mj = new BenchJudge();
+        mj = new BenchJudge();
 
     }
 
