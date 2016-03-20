@@ -43,6 +43,18 @@
             android:name=".InstrActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".ExerActivity"></activity>
+
+        <receiver
+            android:name="TileEventReceiver"
+            android:label="@string/app_name"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.microsoft.band.action.ACTION_TILE_OPENED"/>
+                <action android:name="com.microsoft.band.action.ACTION_TILE_BUTTON_PRESSED"/>
+                <action android:name="com.microsoft.band.action.ACTION_TILE_CLOSED"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

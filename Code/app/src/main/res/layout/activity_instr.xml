@@ -27,45 +27,49 @@
         tools:context="com.smarttrainer.smarttrainer.InstrActivity">
 
         <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Bench Press"
-        android:gravity="center"
-        android:textSize="20sp"
-        android:padding="12dp"
-        android:textColor="#000000"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Bench Press"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:padding="12dp"
+            android:textColor="#000000"/>
 
-    <!--TODO: use GIFViewer here!-->
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:src="@drawable/temp_bench_press"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Muscles:"
-        android:textSize="17sp"
-        android:textColor="#000000"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Pectoralis major, anterior deltoid, triceps"
-        android:textSize="16sp"
-        android:textColor="@color/tabgrey"/>
-    <Button
-        android:layout_marginTop="@dimen/vertical_margin_sum"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="PROCEDURE"
-        android:background="@android:color/white"/>
-    <Button
-        android:id="@+id/start_btn"
-        android:layout_marginTop="@dimen/vertical_margin_sum"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="START"
-        android:textColor="@android:color/white"
-        android:background="@color/colorPrimary"/>
+        <!--use GIFViewer here!-->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/temp_bench_press"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Muscles:"
+            android:textSize="17sp"
+            android:textColor="#000000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pectoralis major, anterior deltoid, triceps"
+            android:textSize="16sp"
+            android:textColor="@color/tabgrey"/>
+        <Button
+            android:layout_marginTop="@dimen/vertical_margin_sum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PROCEDURE"
+            android:background="@android:color/white"/>
+        <Button
+            android:id="@+id/start_btn"
+            android:layout_marginTop="@dimen/vertical_margin_sum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="START"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"/>
+        <TextView
+            android:id="@+id/band"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </LinearLayout>
