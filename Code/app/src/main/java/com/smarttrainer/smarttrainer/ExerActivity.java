@@ -1,13 +1,20 @@
 package com.smarttrainer.smarttrainer;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -30,6 +37,7 @@ import java.util.Locale;
 public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnInitListener{
     private BandClient client = null;
     private TextView txtStatus;
+    private boolean mute = false;
 
     private double curAx = 0;
     private double curAy = 0;
@@ -68,8 +76,8 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
     Runnable testExer = new Runnable(){
         public void run(){
             String toSpeak = mj.judgeMotion(ls, 0);
-            Log.d("toSpeak", toSpeak);
-            tts.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+            if (!mute)
+                tts.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
 
             ls.clear();
             runner.postDelayed( this, 6000 );
@@ -79,6 +87,21 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exer2);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.instr_toolbar);
+        setSupportActionBar(myToolbar);
+
+        if(Build.VERSION.SDK_INT >= 21) {
+            // set statusBar
+            Window window = this.getWindow();
+            // clear FLAG_TRANSLUCENT_STATUS flag:
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            // finally change the color
+            window.setStatusBarColor(Color.parseColor("#a20000"));
+        }
+
         tts = new TextToSpeech(this, this);
 
         txtStatus = (TextView) findViewById(R.id.txt_status);
@@ -101,6 +124,27 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
         mj = new BenchJudge();
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.instr_toolbar, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.mute)
+            mute = true;
+        else if (id == R.id.play_sound)
+            mute = false;
+        //noinspection SimplifiableIfStatement
+        return true;
     }
 
     private class AccelerometerSubscriptionTask extends AsyncTask<Void, Void, Void> {

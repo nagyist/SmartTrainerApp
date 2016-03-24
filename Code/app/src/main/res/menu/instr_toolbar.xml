@@ -8,4 +8,10 @@
         android:icon="@drawable/play_sound"
         android:title="play sound"
         smarttrainer:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/mute"
+        android:icon="@drawable/mute"
+        android:title="mute"
+        smarttrainer:showAsAction="ifRoom"/>
 </menu>

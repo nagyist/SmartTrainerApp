@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -18,7 +19,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.microsoft.band.BandClient;
 import com.microsoft.band.BandClientManager;
 import com.microsoft.band.BandException;
@@ -66,10 +66,23 @@ public class InstrActivity extends AppCompatActivity {
             window.setStatusBarColor(Color.parseColor("#a20000"));
         }
 
+        Button procedure = (Button) findViewById(R.id.prcd_btn);
+        procedure.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v)
+            {
+                DialogFragment newFragment = new ProcedureFragment();
+                newFragment.show(getSupportFragmentManager(), "missiles");
+            }
+        });
+
         Button start = (Button) findViewById(R.id.start_btn);
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (tts != null) {
+                    tts.stop();
+                    tts.shutdown();
+                }
                 Intent toExer = new Intent();
                 toExer.setClass(InstrActivity.this, ExerActivity.class);
                 startActivity(toExer);
@@ -132,10 +145,14 @@ public class InstrActivity extends AppCompatActivity {
             if (intent.getAction() == TileEvent.ACTION_TILE_OPENED) {
                 TileEvent tileOpenData = intent.getParcelableExtra(TileEvent.TILE_EVENT_DATA);
                 appendToUI("Tile open event received\n" + tileOpenData.toString() + "\n\n");
-            } else if (intent.getAction() == TileEvent.ACTION_TILE_BUTTON_PRESSED) {
+            } else if (intent.getAction() == TileEvent.ACTION_TILE_BUTTON_PRESSED)
+            {
                 TileButtonEvent buttonData = intent.getParcelableExtra(TileEvent.TILE_EVENT_DATA);
                 appendToUI("Button event received\n" + buttonData.toString() + "\n\n");
-            } else if (intent.getAction() == TileEvent.ACTION_TILE_CLOSED) {
+
+                //TODO: add intent to ExerActivity
+            }
+            else if (intent.getAction() == TileEvent.ACTION_TILE_CLOSED) {
                 TileEvent tileCloseData = intent.getParcelableExtra(TileEvent.TILE_EVENT_DATA);
                 appendToUI("Tile close event received\n" + tileCloseData.toString() + "\n\n");
             }
@@ -271,7 +288,20 @@ public class InstrActivity extends AppCompatActivity {
                 }
             });
         }
-        //noinspection SimplifiableIfStatement
+        else if (id == R.id.mute && tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
         return true;
+    }
+
+    public void onDestroy()
+    {
+        if (tts != null)
+        {
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onDestroy();
     }
 }

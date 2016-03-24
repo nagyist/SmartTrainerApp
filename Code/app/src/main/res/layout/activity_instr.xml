@@ -35,12 +35,17 @@
             android:padding="12dp"
             android:textColor="#000000"/>
 
-        <!--use GIFViewer here!-->
+        <!--use GIFViewer here!
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
-            android:src="@drawable/temp_bench_press"/>
+            android:src="@drawable/temp_bench_press"/>-->
+
+        <pl.droidsonroids.gif.GifImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/bench_press_gif"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -54,6 +59,7 @@
             android:textSize="16sp"
             android:textColor="@color/tabgrey"/>
         <Button
+            android:id="@+id/prcd_btn"
             android:layout_marginTop="@dimen/vertical_margin_sum"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

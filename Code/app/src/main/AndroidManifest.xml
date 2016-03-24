@@ -42,7 +42,9 @@
         <activity
             android:name=".InstrActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".ExerActivity"></activity>
+        <activity
+            android:name=".ExerActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <receiver
             android:name="TileEventReceiver"
