@@ -32,8 +32,8 @@ public class Workout extends Activity {
     Handler runner = new Handler();
     Runnable writeLog = new Runnable(){
         public void run(){
-            Log.i("accel", curAx + " " + curAy + " " + curAz);
-            runner.postDelayed( this, 20 );
+            writeToConsole(String.format(" %.3f , %.3f , %.3f", curAx, curAy, curAz));
+            runner.postDelayed( this, 50 );
         }
     };
 
@@ -44,7 +44,7 @@ public class Workout extends Activity {
                 curAx = event.getAccelerationX();
                 curAy = event.getAccelerationY();
                 curAz = event.getAccelerationZ();
-                writeToConsole(String.format(" %.3f , %.3f , %.3f", curAx, curAy, curAz));
+//                writeToConsole(String.format(" %.3f , %.3f , %.3f", curAx, curAy, curAz));
 //                appendToUI(String.format(" X = %.3f \n Y = %.3f\n Z = %.3f", curAx, curAy, curAz));
             }
         }
@@ -66,14 +66,16 @@ public class Workout extends Activity {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!writeToConsoleEnabled) {
+                if (!writeToConsoleEnabled) {
                     txtStatus.setText("");
                     btnStart.setText("Stop");
                     writeToConsole("Start reading:");
                     new AccelerometerSubscriptionTask().execute();
+                    runner.postDelayed(writeLog, 50);
                 } else {
                     try {
                         client.getSensorManager().unregisterAccelerometerEventListener(mAccelerometerEventListener);
+                        runner.removeCallbacks(writeLog);
                         writeToConsole("Stop reading.");
                         btnStart.setText("Start");
                     } catch (BandIOException e) {
@@ -83,8 +85,6 @@ public class Workout extends Activity {
                 writeToConsoleEnabled = !writeToConsoleEnabled;
             }
         });
-
-//        runner.postDelayed(writeLog, 500);
     }
 
     @Override
