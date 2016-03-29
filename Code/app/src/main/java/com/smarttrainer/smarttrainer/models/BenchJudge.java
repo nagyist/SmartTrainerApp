@@ -1,11 +1,7 @@
 package com.smarttrainer.smarttrainer.models;
 
 import android.util.Log;
-
-import org.apache.commons.math3.complex.Complex;
-import org.apache.commons.math3.transform.FastFourierTransformer;
-import org.apache.commons.math3.transform.DftNormalization;
-import org.apache.commons.math3.transform.TransformType;
+import org.jtransforms.fft.FloatFFT_1D;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -16,59 +12,55 @@ import java.util.ArrayList;
  * Created by fan on 3/12/16.
  */
 public class BenchJudge implements MotionJudge{
-    List<double[]> allSensorRawData;
+    List<float[]> allSensorRawData;
     int count;
-    FastFourierTransformer fft;
     double Fs;
 
     public BenchJudge(){
-        allSensorRawData = new ArrayList<>();
+        allSensorRawData = new ArrayList<float[]>();
         count = 0;
         this.Fs = 20;
-        this.fft = new FastFourierTransformer(DftNormalization.STANDARD);
-        Log.d("Constructor"," ");
     }
 
-    private double getFrequencyAtMaxAmplitude(List<double[]> sensorRawData){
+    private double getFrequencyAtMaxAmplitude(List<float[]> sensorRawData){
         int L = sensorRawData.size();
-        double T = L*(1/this.Fs);
-        double[] dataInYAxis = new double[1<<8];
-        for(int i=0;i<L-10;i++){
-            dataInYAxis[i] = sensorRawData.get(i+10)[0];
-            Log.d("xzy",""+sensorRawData.get(i+10)[0]);
-        }
-        Complex[] Y = this.fft.transform(dataInYAxis, TransformType.FORWARD);
-        double[] P2 = new double[L+1];
+        FloatFFT_1D fft = new FloatFFT_1D(L);
+        float T = (float)(L*(1/this.Fs));
+        float[] dataInYAxis = new float[L*2];
         for(int i=0;i<L;i++){
-            P2[i] = Math.abs(Y[i].getReal()/L);
+            dataInYAxis[i] = sensorRawData.get(i)[0];
         }
-        double[] P1 = new double[L+1];
+        fft.realForwardFull(dataInYAxis);
+        double[] P2 = new double[L];
+        for(int i=0;i<L;i++){
+            P2[i] = Math.abs(dataInYAxis[i]/L);
+        }
+        double[] P1 = new double[L];
         System.arraycopy(P2,0,P1,0,L/2);
         for(int i=1;i<L-1;i++){
             P1[i] = 2*P1[i];
         }
-        int offset = 5;
+        int offset = 2;
         double maxAmplitude = 0;
         double frequencyAtMaxAmp = 0;
         for(int i=offset;i<L/2;i++){
-            if(maxAmplitude<P1[i]){
+            if(maxAmplitude<P1[i] && P1[i]>0.1){
                 maxAmplitude = P1[i];
-                frequencyAtMaxAmp = Fs*i/L;
+                frequencyAtMaxAmp = Fs*i/L/2;
             }
         }
         return frequencyAtMaxAmp;
     }
 
-    @Override
-    public String judgeMotion(List<double[]> sensorRawData, int formID) {
+
+    public String judgeMotion(List<float[]> sensorRawData, int formID) {
         this.allSensorRawData.addAll(sensorRawData);
 
         if(formID == 0){
             double frequencyAtMaxAmp = this.getFrequencyAtMaxAmplitude(sensorRawData);
-            Log.d("frequency", "" + frequencyAtMaxAmp);
-            if(frequencyAtMaxAmp<1.1){
+            if(frequencyAtMaxAmp<0.2){
                 return "Too Slow.";
-            } else if(frequencyAtMaxAmp<=2){
+            } else if(frequencyAtMaxAmp<=0.7){
                 return "Good.";
             } else{
                 return "Too Fast";
@@ -77,15 +69,17 @@ public class BenchJudge implements MotionJudge{
         return "Cannot judge this form.";
     }
 
-    @Override
     public int getCount() {
         int L = this.allSensorRawData.size();
+        if(L==0){
+            return 0;
+        }
         double T = L*(1/this.Fs);
         double frequencyAtMaxAmp = this.getFrequencyAtMaxAmplitude(this.allSensorRawData);
         return (int)(T*frequencyAtMaxAmp);
     }
 
-    @Override
+
     public void reset() {
         this.allSensorRawData.clear();
     }

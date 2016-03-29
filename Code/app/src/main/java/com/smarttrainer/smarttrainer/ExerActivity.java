@@ -43,15 +43,15 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private double curAy = 0;
     private double curAz = 0;
 
-    List<double[]> ls;
+    List<float[]> ls;
 
     Handler recorder = new Handler();
     Runnable writeArray = new Runnable(){
         public void run(){
-            double[] cur = new double[3];
-            cur[0] = curAx;
-            cur[1] = curAy;
-            cur[2] = curAz;
+            float[] cur = new float[3];
+            cur[0] = (float)curAx;
+            cur[1] = (float)curAy;
+            cur[2] = (float)curAz;
             ls.add(cur);
             runner.postDelayed( this, 50 );
         }
@@ -119,7 +119,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
             }
         });
 
-        ls = new ArrayList<double[]>(4096);
+        ls = new ArrayList<float[]>(4096);
         recorder.postDelayed(writeArray, 50);
 
         mj = new BenchJudge();
