@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.microsoft.band.BandClient;
@@ -37,6 +38,9 @@ import java.util.Locale;
 public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnInitListener{
     private BandClient client = null;
     private TextView txtStatus;
+    private TextView curScore;
+    private TextView curSet;
+    private TextView curRep;
     private boolean mute = false;
 
     private double curAx = 0;
@@ -106,15 +110,23 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
         txtStatus = (TextView) findViewById(R.id.txt_status);
         txtStatus.setText("Ready");
+
+        curScore = (TextView) findViewById(R.id.cur_score);
+        curSet = (TextView) findViewById(R.id.cur_set);
+        curRep = (TextView) findViewById(R.id.cur_rep);
+
         new AccelerometerSubscriptionTask().execute();
 
-        Button stop = (Button) findViewById(R.id.stop_btn);
+        ImageButton stop = (ImageButton) findViewById(R.id.stop_btn);
         stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 runner.removeCallbacks(testExer);
                 recorder.removeCallbacks(writeArray);
-                appendToUI(String.format("You complete %d this time", mj.getCount()));
+
+                // TODO: DB update and display
+                appendToUI("3", String.valueOf(mj.getCount()));
+                //curRep.setText(Integer.valueOf(curRep.getText().toString()) + mj.getCount());
                 mj.reset();
             }
         });
@@ -152,10 +164,10 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         protected Void doInBackground(Void... params) {
             try {
                 if (getConnectedBandClient()) {
-                    appendToUI("Band is connected.\n");
+                    Log.d("band", "Band is connected.\n");
                     client.getSensorManager().registerAccelerometerEventListener(mAccelerometerEventListener, SampleRate.MS16);
                 } else {
-                    appendToUI("Band isn't connected. Please make sure bluetooth is on and the band is in range.\n");
+                    Log.d("band", "Band isn't connected. Please make sure bluetooth is on and the band is in range.\n");
                 }
             } catch (BandException e) {
                 String exceptionMessage="";
@@ -170,10 +182,10 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
                         exceptionMessage = "Unknown error occured: " + e.getMessage() + "\n";
                         break;
                 }
-                appendToUI(exceptionMessage);
+                Log.d("band", exceptionMessage);
 
             } catch (Exception e) {
-                appendToUI(e.getMessage());
+                Log.d("band", e.getMessage());
             }
             return null;
         }
@@ -186,7 +198,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
             try {
                 client.getSensorManager().unregisterAccelerometerEventListener(mAccelerometerEventListener);
             } catch (BandIOException e) {
-                appendToUI(e.getMessage());
+                Log.d("band", e.getMessage());
             }
         }
     }
@@ -205,11 +217,13 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         super.onDestroy();
     }
 
-    private void appendToUI(final String string) {
+    private void appendToUI(final String set, final String rep) {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                txtStatus.setText(string);
+                Log.d("UI", "set");
+                curSet.setText(set);
+                curRep.setText(rep);
             }
         });
     }
@@ -218,7 +232,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         if (client == null) {
             BandInfo[] devices = BandClientManager.getInstance().getPairedBands();
             if (devices.length == 0) {
-                appendToUI("Band isn't paired with your phone.\n");
+                Log.d("band", "Band isn't paired with your phone.\n");
                 return false;
             }
             client = BandClientManager.getInstance().create(getBaseContext(), devices[0]);
@@ -226,7 +240,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
             return true;
         }
 
-        appendToUI("Band is connecting...\n");
+        Log.d("band", "Band is connecting...\n");
         return ConnectionState.CONNECTED == client.connect().await();
     }
 

@@ -151,11 +151,18 @@ public class InstrActivity extends AppCompatActivity {
                 appendToUI("Button event received\n" + buttonData.toString() + "\n\n");
 
                 //TODO: add intent to ExerActivity
+                if (tts != null) {
+                    tts.stop();
+                    tts.shutdown();
+                }
+                Intent toExer = new Intent();
+                toExer.setClass(InstrActivity.this, ExerActivity.class);
+                startActivity(toExer);
             }
-            else if (intent.getAction() == TileEvent.ACTION_TILE_CLOSED) {
+            /*else if (intent.getAction() == TileEvent.ACTION_TILE_CLOSED) {
                 TileEvent tileCloseData = intent.getParcelableExtra(TileEvent.TILE_EVENT_DATA);
                 appendToUI("Tile close event received\n" + tileCloseData.toString() + "\n\n");
-            }
+            }*/
         }
     }
 
@@ -188,7 +195,7 @@ public class InstrActivity extends AppCompatActivity {
         client.getTileManager().setPages(tileId,
                 new PageData(pageId1, 0)
                         .update(new FilledButtonData(12, Color.YELLOW))
-                        .update(new TextButtonData(21, "Visca Barca")));
+                        .update(new TextButtonData(21, "Start")));
         appendToUI("Press black button on band to start \n\n");
     }
 
