@@ -27,6 +27,7 @@
         tools:context="com.smarttrainer.smarttrainer.InstrActivity">
 
         <TextView
+            android:id="@+id/exer_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Bench Press"
@@ -43,6 +44,7 @@
             android:src="@drawable/temp_bench_press"/>-->
 
         <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/gif_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:src="@drawable/bench_press_gif"/>

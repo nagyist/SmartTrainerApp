@@ -69,6 +69,18 @@ public class MainPageFrag extends Fragment {
                     startActivity(toInstr);
                 }
             });
+
+            LinearLayout curl = (LinearLayout) view.findViewById(R.id.dumbbell_lifting_button);
+            curl.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v) {
+                    Intent toInstr = new Intent();
+                    toInstr.putExtra("ID", 1);
+                    toInstr.setClass(getActivity(), InstrActivity.class);
+                    startActivity(toInstr);
+                }
+            });
             return view;
         }
         else if (pageN == 3) {

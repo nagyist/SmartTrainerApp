@@ -36,10 +36,13 @@ import com.microsoft.band.tiles.pages.PageData;
 import com.microsoft.band.tiles.pages.PageLayout;
 import com.microsoft.band.tiles.pages.TextButton;
 import com.microsoft.band.tiles.pages.TextButtonData;
+import com.smarttrainer.smarttrainer.models.GetByID;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+
+import pl.droidsonroids.gif.GifImageView;
 
 public class InstrActivity extends AppCompatActivity {
     TextToSpeech tts;
@@ -66,6 +69,16 @@ public class InstrActivity extends AppCompatActivity {
             window.setStatusBarColor(Color.parseColor("#a20000"));
         }
 
+        Bundle b = getIntent().getExtras();
+        final int id = b.getInt("ID");
+
+        TextView exerName = (TextView) findViewById(R.id.exer_name);
+        exerName.setText(GetByID.getExerName(id));
+
+        GifImageView gifImageView = (GifImageView) findViewById(R.id.gif_view);
+        if (id == 1)
+            gifImageView.setImageResource(R.drawable.curl);
+
         Button procedure = (Button) findViewById(R.id.prcd_btn);
         procedure.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v)
@@ -84,6 +97,7 @@ public class InstrActivity extends AppCompatActivity {
                     tts.shutdown();
                 }
                 Intent toExer = new Intent();
+                toExer.putExtra("ID", id);
                 toExer.setClass(InstrActivity.this, ExerActivity.class);
                 startActivity(toExer);
             }
@@ -150,7 +164,6 @@ public class InstrActivity extends AppCompatActivity {
                 TileButtonEvent buttonData = intent.getParcelableExtra(TileEvent.TILE_EVENT_DATA);
                 appendToUI("Button event received\n" + buttonData.toString() + "\n\n");
 
-                //TODO: add intent to ExerActivity
                 if (tts != null) {
                     tts.stop();
                     tts.shutdown();
