@@ -1,6 +1,9 @@
 package com.smarttrainer.smarttrainer;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -18,6 +21,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.microsoft.band.BandClient;
 import com.microsoft.band.BandClientManager;
@@ -31,7 +35,9 @@ import com.microsoft.band.sensors.SampleRate;
 import com.smarttrainer.smarttrainer.models.BenchJudge;
 import com.smarttrainer.smarttrainer.models.MotionJudge;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -41,6 +47,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private TextView curScore;
     private TextView curSet;
     private TextView curRep;
+    private TextView prevBest;
     private boolean mute = false;
 
     private double curAx = 0;
@@ -111,9 +118,38 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         txtStatus = (TextView) findViewById(R.id.txt_status);
         txtStatus.setText("Ready");
 
-        curScore = (TextView) findViewById(R.id.cur_score);
+        Bundle b = getIntent().getExtras();
+        final int id = b.getInt("ID");
+
+        final DBHelper dbHelper = new DBHelper(getApplicationContext());
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+
+        String selectSet = "SELECT reps, score FROM workout_history WHERE timestamp > ?";
+        String curDay = getToday();
+        Cursor cursor = db.rawQuery(selectSet, new String[]{curDay});
+
         curSet = (TextView) findViewById(R.id.cur_set);
+        final int curSetCount = cursor.getCount();
+        curSet.setText(String.valueOf(curSetCount));
+
+        curScore = (TextView) findViewById(R.id.cur_score);
+        prevBest = (TextView) findViewById(R.id.prev_best_num);
         curRep = (TextView) findViewById(R.id.cur_rep);
+        float maxScore = -1;
+        int curReps = 0;
+        if (cursor != null)
+            if (cursor.moveToFirst())
+            {
+                do
+                {
+                    maxScore = Math.max(maxScore, cursor.getFloat(cursor.getColumnIndex("score")));
+                    curReps += cursor.getInt(cursor.getColumnIndex("reps"));
+                } while (cursor.moveToNext());
+            }
+        prevBest.setText(maxScore + "%");
+        curRep.setText(String.valueOf(curReps));
+        cursor.close();
 
         new AccelerometerSubscriptionTask().execute();
 
@@ -124,9 +160,21 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 runner.removeCallbacks(testExer);
                 recorder.removeCallbacks(writeArray);
 
+                int finished = mj.getCount();
                 // TODO: DB update and display
-                appendToUI("3", String.valueOf(mj.getCount()));
+                appendToUI("" + (curSetCount + 1), String.valueOf(finished), (float) 66.88, false);
                 //curRep.setText(Integer.valueOf(curRep.getText().toString()) + mj.getCount());
+
+                // TODO: if (finished > 0)
+                SQLiteDatabase db = dbHelper.getWritableDatabase(); // write access
+
+                ContentValues values = new ContentValues();
+                values.put("formID", id);
+                values.put("reps", 5); // TODO: finished
+                values.put("score", 88.88); // TODO: Score
+                long rowId = db.insert("workout_history", null, values);
+
+                Log.d( "rowId", "inserted " + rowId);
                 mj.reset();
             }
         });
@@ -136,6 +184,15 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
         mj = new BenchJudge();
 
+    }
+
+    private String getToday()
+    {
+        Timestamp today = new Timestamp(System.currentTimeMillis());
+        today.setHours(0);
+        today.setMinutes(0);
+        today.setSeconds(0);
+        return today.toString();
     }
 
     @Override
@@ -217,13 +274,15 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         super.onDestroy();
     }
 
-    private void appendToUI(final String set, final String rep) {
+    private void appendToUI(final String set, final String rep, final float score, final boolean max) {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Log.d("UI", "set");
                 curSet.setText(set);
                 curRep.setText(rep);
+                curScore.setText(score + "%");
+                if (max)
+                    prevBest.setText(score + "%");
             }
         });
     }
