@@ -156,6 +156,7 @@ public class WorkoutFragment extends Fragment{
                         putDay(timeStart, map);
                         map.put("sets", String.valueOf(dailySet));
                         map.put("reps", String.valueOf(dailyRep / dailySet));
+                        weeklyReps += dailyRep;
                         weeklyTotalTime += putDuration(timeStart, timeEnd, firstSet, map);
                         mylist.add(map);
                         weeklyDays ++;
