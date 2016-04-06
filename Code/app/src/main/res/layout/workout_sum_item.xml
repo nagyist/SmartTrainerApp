@@ -46,6 +46,7 @@
         android:layout_marginLeft="50dp"
         android:orientation="vertical">
         <TextView
+            android:id="@+id/exer_duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/vertical_margin_sum"
@@ -77,6 +78,7 @@
         android:layout_marginLeft="50dp"
         android:orientation="vertical">
         <TextView
+            android:id="@+id/exer_sets_sum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -108,6 +110,7 @@
         android:layout_marginLeft="50dp"
         android:orientation="vertical">
         <TextView
+            android:id="@+id/exer_reps_sum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

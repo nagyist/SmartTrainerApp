@@ -1,7 +1,10 @@
 package com.smarttrainer.smarttrainer;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +13,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
+import android.widget.TextView;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -26,9 +35,14 @@ public class WorkoutFragment extends Fragment{
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
+    private String selectSet = "SELECT timestamp, reps, score FROM workout_history WHERE timestamp > ? AND formID = ?";
+    private String curMonth;
+    private SQLiteDatabase db;
+
     ListView workoutList;
+    TextView weeklyRep;
+    TextView weeklyDay;
+    TextView weeklyTime;
 
     public WorkoutFragment() {
         // Required empty public constructor
@@ -69,24 +83,103 @@ public class WorkoutFragment extends Fragment{
                 R.array.workout_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
+
+        final TextView month = (TextView) view.findViewById(R.id.month);
+        month.setText(Calendar.getInstance().getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US));
+
+        weeklyRep = (TextView) view.findViewById(R.id.month_rep);
+        weeklyDay = (TextView) view.findViewById(R.id.weeklyDay);
+        weeklyTime = (TextView) view.findViewById(R.id.week_time);
+
+        final DBHelper dbHelper = new DBHelper(getContext());
+        db = dbHelper.getReadableDatabase();
+        curMonth = getThisMonth();
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int pos, long id) {
                 String[] forms = getResources().getStringArray(R.array.workout_array);
-                //Toast.makeText(getActivity(), forms[pos], Toast.LENGTH_SHORT).show();
+                Cursor cursor = db.rawQuery(selectSet, new String[]{curMonth, String.valueOf(id)});
+                //Toast.makeText(getActivity(), "pos: " + pos + " id: " + id, Toast.LENGTH_SHORT).show();
+
+                Timestamp timeStart = null, timeEnd = null;
+                int firstSet = 0;
+                int dailySet = 0;
+                int dailyRep = 0;
+                int weeklyDays = 0;
+                int weeklyReps = 0;
+                long weeklyTotalTime = 0;
+
                 ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
-                HashMap<String, String> map = new HashMap<String, String>();
-                map.put("Day", "Today");
-                mylist.add(map);
-                HashMap<String, String> anthmap = new HashMap<String, String>();
+                Calendar thisWeek = Calendar.getInstance();
+                thisWeek.set(Calendar.HOUR, 0);
+                thisWeek.set(Calendar.MINUTE, 0);
+                thisWeek.set(Calendar.SECOND, 0);
+                thisWeek.add(Calendar.DAY_OF_YEAR, -6);
+
+                if (cursor != null)
+                    if (cursor.moveToFirst())
+                    {
+                        do
+                        {
+                            Timestamp curItem = Timestamp.valueOf(cursor.getString(cursor.getColumnIndex("timestamp")));
+
+                            if (timeStart != null && curItem.getDate() != timeStart.getDate())
+                            {
+                                HashMap<String, String> map = new HashMap<String, String>();
+                                putDay(timeStart, map);
+                                map.put("sets", String.valueOf(dailySet));
+                                map.put("reps", String.valueOf(dailyRep / dailySet));
+                                weeklyReps += dailyRep;
+                                weeklyTotalTime += putDuration(timeStart, timeEnd, firstSet, map);
+
+                                mylist.add(map);
+                                weeklyDays ++;
+                            }
+
+                            if (timeStart == null && curItem.getTime() > thisWeek.getTime().getTime())
+                            {
+                                Log.d("found", curItem.toString());
+                                timeStart = curItem;
+                                firstSet = cursor.getInt(cursor.getColumnIndex("reps"));
+                                dailyRep = 0;
+                                dailySet = 0;
+                            }
+                            timeEnd = curItem;
+                            dailyRep += cursor.getInt(cursor.getColumnIndex("reps"));
+                            dailySet ++;
+
+                        } while (cursor.moveToNext());
+
+                        HashMap<String, String> map = new HashMap<String, String>();
+                        putDay(timeStart, map);
+                        map.put("sets", String.valueOf(dailySet));
+                        map.put("reps", String.valueOf(dailyRep / dailySet));
+                        weeklyTotalTime += putDuration(timeStart, timeEnd, firstSet, map);
+                        mylist.add(map);
+                        weeklyDays ++;
+
+                        weeklyRep.setText(String.valueOf(weeklyReps));
+                        weeklyDay.setText(String.valueOf(weeklyDays));
+                        weeklyTime.setText(String.format("%02d:%02d:%02d",
+                                TimeUnit.MILLISECONDS.toHours(weeklyTotalTime),
+                                TimeUnit.MILLISECONDS.toMinutes(weeklyTotalTime) -
+                                        TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(weeklyTotalTime)),
+                                TimeUnit.MILLISECONDS.toSeconds(weeklyTotalTime) -
+                                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(weeklyTotalTime))));
+                    }
+
+                /*HashMap<String, String> anthmap = new HashMap<String, String>();
                 anthmap.put("Day", "Monday");
-                mylist.add(anthmap);
+                mylist.add(anthmap);*/
+
+                Collections.reverse(mylist);
                 //生成适配器，数组===》ListItem  */
                 SimpleAdapter mSchedule = new SimpleAdapter(getActivity(), mylist,//数据来源
                         R.layout.workout_sum_item,//ListItem的XML实现
-                        new String[] {"Day"},     //动态数组与ListItem对应的子项
-                        new int[] {R.id.weekDay});//ListItem的XML文件里面的两个TextView ID
+                        new String[] {"Day", "sets", "reps", "duration"},     //动态数组与ListItem对应的子项
+                        new int[] {R.id.weekDay, R.id.exer_sets_sum, R.id.exer_reps_sum, R.id.exer_duration});//ListItem的XML文件里面的multimple TextView ID
                 workoutList.setAdapter(mSchedule);
             }
             @Override
@@ -95,6 +188,40 @@ public class WorkoutFragment extends Fragment{
             }
         });
         return view;
+    }
+
+    private String getThisMonth()
+    {
+        Timestamp today = new Timestamp(System.currentTimeMillis());
+        today.setDate(1);
+        today.setHours(0);
+        today.setMinutes(0);
+        today.setSeconds(0);
+        return today.toString();
+    }
+
+    private void putDay(Timestamp timeStart, HashMap<String, String> map)
+    {
+        Calendar now = Calendar.getInstance();
+        if (timeStart.getDate() == now.get(Calendar.DAY_OF_MONTH))
+            map.put("Day", "Today");
+        else {
+            Calendar item = Calendar.getInstance();
+            item.setTime(timeStart);
+            map.put("Day", item.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US));
+        }
+        timeStart = null;
+    }
+
+    private long putDuration(Timestamp timeStart, Timestamp timeEnd, int firstSet, HashMap<String, String> map)
+    {
+        long millis = timeEnd.getTime() - timeStart.getTime();
+        millis += (3000 * firstSet);
+        map.put("duration", String.format("%02d:%02d",
+                TimeUnit.MILLISECONDS.toHours(millis),
+                TimeUnit.MILLISECONDS.toMinutes(millis) -
+                        TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis))));
+        return millis;
     }
     /*
     // TODO: Rename method, update argument and hook method into UI event

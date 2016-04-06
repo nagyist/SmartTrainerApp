@@ -189,9 +189,9 @@ public class InstrActivity extends AppCompatActivity {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap tileIcon = BitmapFactory.decodeResource(getBaseContext().getResources(), R.drawable.sets, options);
+        Bitmap tileIcon = BitmapFactory.decodeResource(getBaseContext().getResources(), R.drawable.black_white, options);
 
-        BandTile tile = new BandTile.Builder(tileId, "Button Tile", tileIcon)
+        BandTile tile = new BandTile.Builder(tileId, "Smartrainer", tileIcon)
                 .setPageLayouts(createButtonLayout())
                 .build();
         appendToUI("Button Tile is adding ...\n");

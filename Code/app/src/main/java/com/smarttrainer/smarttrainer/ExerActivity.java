@@ -41,6 +41,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import pl.droidsonroids.gif.GifImageView;
+
 public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnInitListener{
     private BandClient client = null;
     private TextView txtStatus;
@@ -121,13 +123,16 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         Bundle b = getIntent().getExtras();
         final int id = b.getInt("ID");
 
+        GifImageView gifImageView = (GifImageView) findViewById(R.id.exer_gif);
+        if (id == 1)
+            gifImageView.setImageResource(R.drawable.curl);
+
         final DBHelper dbHelper = new DBHelper(getApplicationContext());
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-
-        String selectSet = "SELECT reps, score FROM workout_history WHERE timestamp > ?";
+        String selectSet = "SELECT reps, score FROM workout_history WHERE timestamp > ? AND formID = ?";
         String curDay = getToday();
-        Cursor cursor = db.rawQuery(selectSet, new String[]{curDay});
+        Cursor cursor = db.rawQuery(selectSet, new String[]{curDay, String.valueOf(id)});
 
         curSet = (TextView) findViewById(R.id.cur_set);
         final int curSetCount = cursor.getCount();
@@ -136,7 +141,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         curScore = (TextView) findViewById(R.id.cur_score);
         prevBest = (TextView) findViewById(R.id.prev_best_num);
         curRep = (TextView) findViewById(R.id.cur_rep);
-        float maxScore = -1;
+        float maxScore = 0;
         int curReps = 0;
         if (cursor != null)
             if (cursor.moveToFirst())
