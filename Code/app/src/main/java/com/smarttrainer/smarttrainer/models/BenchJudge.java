@@ -53,20 +53,17 @@ public class BenchJudge implements MotionJudge{
     }
 
 
-    public String judgeMotion(List<float[]> sensorRawData, int formID) {
+    public String judgeMotion(List<float[]> sensorRawData) {
         this.allSensorRawData.addAll(sensorRawData);
 
-        if(formID == 0){
-            double frequencyAtMaxAmp = this.getFrequencyAtMaxAmplitude(sensorRawData);
-            if(frequencyAtMaxAmp<0.2){
-                return "Too Slow.";
-            } else if(frequencyAtMaxAmp<=0.7){
-                return "Good.";
-            } else{
-                return "Too Fast";
-            }
+        double frequencyAtMaxAmp = this.getFrequencyAtMaxAmplitude(sensorRawData);
+        if(frequencyAtMaxAmp<0.2){
+            return "Too Slow.";
+        } else if(frequencyAtMaxAmp<=0.7){
+            return "Good.";
+        } else{
+            return "Too Fast";
         }
-        return "Cannot judge this form.";
     }
 
     public int getCount() {

@@ -10,16 +10,13 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-    }
-    defaultConfig {
-        // Enabling multidex support.
-        multiDexEnabled true
     }
 }
 
@@ -36,4 +33,5 @@ dependencies {
     compile 'org.kie.modules:org-apache-commons-math:6.4.0.CR1'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.+'
     compile files('libs/JTransforms-3.1-with-dependencies.jar')
+    compile files('libs/weka.jar')
 }

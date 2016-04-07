@@ -34,7 +34,9 @@ import com.microsoft.band.sensors.BandAccelerometerEventListener;
 import com.microsoft.band.sensors.SampleRate;
 import com.smarttrainer.smarttrainer.models.BenchJudge;
 import com.smarttrainer.smarttrainer.models.MotionJudge;
+import com.smarttrainer.smarttrainer.models.MotionJudgeImpl;
 
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -89,7 +91,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private Handler runner = new Handler();
     Runnable testExer = new Runnable(){
         public void run(){
-            String toSpeak = mj.judgeMotion(ls, id);
+            String toSpeak = mj.judgeMotion(ls);
             if (!mute)
                 tts.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
 
@@ -188,8 +190,18 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         ls = new ArrayList<float[]>(4096);
         recorder.postDelayed(writeArray, 50);
 
-        mj = new BenchJudge();
 
+        mj = new MotionJudgeImpl(getMotionJudgeModelInputStream(id));
+
+    }
+
+    private InputStream getMotionJudgeModelInputStream(int formId){
+        if(formId==0){
+            return this.getResources().openRawResource(R.raw.bench);
+        } else if(formId==1){
+            return this.getResources().openRawResource(R.raw.curl);
+        }
+        return null;
     }
 
     private String getToday()
