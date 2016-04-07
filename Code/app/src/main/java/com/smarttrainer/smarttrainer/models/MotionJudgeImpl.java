@@ -6,6 +6,7 @@ import weka.classifiers.Classifier;
 import weka.core.FastVector;
 import weka.core.Attribute;
 import weka.core.Instance;
+import weka.core.Instances;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -29,13 +30,17 @@ public class MotionJudgeImpl implements MotionJudge{
 
     public String judgeMotion(List<float[]> sensorRawData){
         this.allSensorRawData.addAll(sensorRawData);
-        Instance instance = new Instance(6);
+        Instance instance = new Instance(7);
         for (int k = 0; k < 6; k++) {
             instance.setValue((Attribute) attributes.elementAt(k),
                     this.getFrequencyAtMaxAmplitude(sensorRawData)[k]);
         }
+
+        Instances training = new Instances("test", attributes, 1);
+        training.setClassIndex(6);
+        training.add(instance);
         try {
-            int motionClass = (int)(Math.round(myClassifier.classifyInstance(instance)));
+            int motionClass = (int)(Math.round(myClassifier.classifyInstance(training.instance(0))));
             if(motionClass==0){
                 return "Too Slow";
             } else if(motionClass==1){
@@ -45,10 +50,10 @@ public class MotionJudgeImpl implements MotionJudge{
             } else if(motionClass==3){
                 return "Out of direction";
             } else{
-                return "";
+                return "Error";
             }
         } catch (Exception e){
-            return "";
+            return "Error";
         }
     }
 
@@ -107,8 +112,8 @@ public class MotionJudgeImpl implements MotionJudge{
 
     private FastVector buildAttribute(){
         FastVector fvWekaAttributes = new FastVector(7);
-        for(int i=0;i<6;i++){
-            fvWekaAttributes.addElement(new Attribute(String.valueOf(i)));
+        for(int i=0;i<7;i++){
+            fvWekaAttributes.addElement(new Attribute(String.valueOf(i),i));
         }
         return fvWekaAttributes;
     }
