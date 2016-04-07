@@ -66,7 +66,7 @@ public class BenchJudge implements MotionJudge{
         }
     }
 
-    public int getCount() {
+    public int getCount(List<float[]> sensorRawData) {
         int L = this.allSensorRawData.size();
         if(L==0){
             return 0;

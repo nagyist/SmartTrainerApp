@@ -31,9 +31,10 @@ public class MotionJudgeImpl implements MotionJudge{
     public String judgeMotion(List<float[]> sensorRawData){
         this.allSensorRawData.addAll(sensorRawData);
         Instance instance = new Instance(7);
+        double[] frequencyAndAmpl = this.getFrequencyAtMaxAmplitude(sensorRawData);
         for (int k = 0; k < 6; k++) {
             instance.setValue((Attribute) attributes.elementAt(k),
-                    this.getFrequencyAtMaxAmplitude(sensorRawData)[k]);
+                    frequencyAndAmpl[k]);
         }
 
         Instances training = new Instances("test", attributes, 1);
@@ -58,13 +59,13 @@ public class MotionJudgeImpl implements MotionJudge{
     }
 
 
-    public int getCount() {
-        int L = this.allSensorRawData.size();
+    public int getCount(List<float[]> sensorRawData) {
+        int L = sensorRawData.size();
         if(L==0){
             return 0;
         }
         double T = L*(1/Fs);
-        double frequencyAtMaxAmp = this.getFrequencyAtMaxAmplitude(this.allSensorRawData)[0];
+        double frequencyAtMaxAmp = this.getFrequencyAtMaxAmplitude(sensorRawData)[0];
         return (int)(T*frequencyAtMaxAmp);
     }
 
@@ -112,9 +113,25 @@ public class MotionJudgeImpl implements MotionJudge{
 
     private FastVector buildAttribute(){
         FastVector fvWekaAttributes = new FastVector(7);
-        for(int i=0;i<7;i++){
-            fvWekaAttributes.addElement(new Attribute(String.valueOf(i),i));
-        }
+        Attribute Attribute1 = new Attribute("firstNumeric",0);
+        Attribute Attribute2 = new Attribute("secondNumeric",1);
+        Attribute Attribute3 = new Attribute("thirdNumeric",2);
+        Attribute Attribute4 = new Attribute("fourthNumeric",3);
+        Attribute Attribute5 = new Attribute("fifthNumeric",4);
+        Attribute Attribute6 = new Attribute("sixthNumeric",5);
+        FastVector fvClassVal = new FastVector(4);
+        fvClassVal.addElement("slow");
+        fvClassVal.addElement("standard");
+        fvClassVal.addElement("fast");
+        fvClassVal.addElement("out_of_direction");
+        Attribute Attribute7 = new Attribute("theClass",fvClassVal,6);
+        fvWekaAttributes.addElement(Attribute1);
+        fvWekaAttributes.addElement(Attribute2);
+        fvWekaAttributes.addElement(Attribute3);
+        fvWekaAttributes.addElement(Attribute4);
+        fvWekaAttributes.addElement(Attribute5);
+        fvWekaAttributes.addElement(Attribute6);
+        fvWekaAttributes.addElement(Attribute7);
         return fvWekaAttributes;
     }
 }

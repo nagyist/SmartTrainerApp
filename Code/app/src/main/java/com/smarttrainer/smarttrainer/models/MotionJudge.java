@@ -9,5 +9,5 @@ public interface MotionJudge {
     double Fs = 20;
     String judgeMotion(List<float[]> sensorRawData);
     void reset();
-    int getCount();
+    int getCount(List<float[]> sensorRawData);
 }

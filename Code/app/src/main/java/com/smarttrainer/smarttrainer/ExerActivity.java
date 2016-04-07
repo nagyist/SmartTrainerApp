@@ -88,16 +88,18 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
     MotionJudge mj;
     private TextToSpeech tts;
+    private int totalCount = 0;
     private static final int TTS_REQUEST_CODE = 903;
     private Handler runner = new Handler();
     Runnable testExer = new Runnable(){
         public void run(){
             String toSpeak = mj.judgeMotion(ls);
+            totalCount+=mj.getCount(ls);
             if (!mute)
                 tts.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
 
             ls.clear();
-            runner.postDelayed( this, 6000 );
+            runner.postDelayed( this, 10000 );
         }
     };
     @Override
@@ -174,9 +176,9 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 runner.removeCallbacks(testExer);
                 recorder.removeCallbacks(writeArray);
 
-                int finished = mj.getCount();
+//                int finished = 0;
                 // TODO: DB update and display
-                appendToUI("" + (curSetCount + 1), String.valueOf(finished), (float) 66.88, false);
+                appendToUI("" + (curSetCount + 1), String.valueOf(totalCount), (float) 66.88, false);
                 //curRep.setText(Integer.valueOf(curRep.getText().toString()) + mj.getCount());
 
                 // TODO: if (finished > 0)
