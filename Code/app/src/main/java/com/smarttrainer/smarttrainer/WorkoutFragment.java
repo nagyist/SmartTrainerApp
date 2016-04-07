@@ -110,6 +110,7 @@ public class WorkoutFragment extends Fragment{
                 int weeklyDays = 0;
                 int weeklyReps = 0;
                 long weeklyTotalTime = 0;
+                double totalScore = 0;
 
                 ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
                 Calendar thisWeek = Calendar.getInstance();
@@ -133,29 +134,31 @@ public class WorkoutFragment extends Fragment{
                                 map.put("reps", String.valueOf(dailyRep / dailySet));
                                 weeklyReps += dailyRep;
                                 weeklyTotalTime += putDuration(timeStart, timeEnd, firstSet, map);
-
+                                putScore(totalScore, dailySet, map);
                                 mylist.add(map);
                                 weeklyDays ++;
                             }
 
                             if (timeStart == null && curItem.getTime() > thisWeek.getTime().getTime())
                             {
-                                Log.d("found", curItem.toString());
+                                //Log.d("found", curItem.toString());
                                 timeStart = curItem;
                                 firstSet = cursor.getInt(cursor.getColumnIndex("reps"));
                                 dailyRep = 0;
                                 dailySet = 0;
+                                totalScore = 0;
                             }
                             timeEnd = curItem;
                             dailyRep += cursor.getInt(cursor.getColumnIndex("reps"));
                             dailySet ++;
-
+                            totalScore += cursor.getFloat(cursor.getColumnIndex("score"));
                         } while (cursor.moveToNext());
 
                         HashMap<String, String> map = new HashMap<String, String>();
                         putDay(timeStart, map);
                         map.put("sets", String.valueOf(dailySet));
                         map.put("reps", String.valueOf(dailyRep / dailySet));
+                        putScore(totalScore, dailySet, map);
                         weeklyReps += dailyRep;
                         weeklyTotalTime += putDuration(timeStart, timeEnd, firstSet, map);
                         mylist.add(map);
@@ -179,8 +182,9 @@ public class WorkoutFragment extends Fragment{
                 //生成适配器，数组===》ListItem  */
                 SimpleAdapter mSchedule = new SimpleAdapter(getActivity(), mylist,//数据来源
                         R.layout.workout_sum_item,//ListItem的XML实现
-                        new String[] {"Day", "sets", "reps", "duration"},     //动态数组与ListItem对应的子项
-                        new int[] {R.id.weekDay, R.id.exer_sets_sum, R.id.exer_reps_sum, R.id.exer_duration});//ListItem的XML文件里面的multimple TextView ID
+                        new String[] {"Day", "sets", "reps", "duration", "integer", "decimal"},     //动态数组与ListItem对应的子项
+                        new int[] {R.id.weekDay, R.id.exer_sets_sum, R.id.exer_reps_sum, R.id.exer_duration,
+                            R.id.scoreInt, R.id.scoreDec});//ListItem的XML文件里面的multimple TextView ID
                 workoutList.setAdapter(mSchedule);
             }
             @Override
@@ -199,6 +203,15 @@ public class WorkoutFragment extends Fragment{
         today.setMinutes(0);
         today.setSeconds(0);
         return today.toString();
+    }
+
+    private void putScore(double totalScore, int dailySet, HashMap<String, String> map)
+    {
+        double avg = totalScore / dailySet;
+        int intPart = (int) avg;
+        map.put("integer", String.valueOf(intPart));
+        int decimal = (int)((avg - intPart) * 10);
+        map.put("decimal", "." + decimal + '%');
     }
 
     private void putDay(Timestamp timeStart, HashMap<String, String> map)
