@@ -44,6 +44,7 @@ import java.util.Locale;
 import pl.droidsonroids.gif.GifImageView;
 
 public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnInitListener{
+    private int id = 0;
     private BandClient client = null;
     private TextView txtStatus;
     private TextView curScore;
@@ -88,7 +89,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private Handler runner = new Handler();
     Runnable testExer = new Runnable(){
         public void run(){
-            String toSpeak = mj.judgeMotion(ls, 0);
+            String toSpeak = mj.judgeMotion(ls, id);
             if (!mute)
                 tts.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
 
@@ -121,7 +122,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         txtStatus.setText("Ready");
 
         Bundle b = getIntent().getExtras();
-        final int id = b.getInt("ID");
+        id = b.getInt("ID");
 
         GifImageView gifImageView = (GifImageView) findViewById(R.id.exer_gif);
         if (id == 1)
