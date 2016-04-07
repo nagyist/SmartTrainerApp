@@ -24,6 +24,7 @@ import com.microsoft.band.BandClientManager;
 import com.microsoft.band.BandException;
 import com.microsoft.band.BandIOException;
 import com.microsoft.band.BandInfo;
+import com.microsoft.band.BandTheme;
 import com.microsoft.band.ConnectionState;
 import com.microsoft.band.tiles.BandTile;
 import com.microsoft.band.tiles.TileButtonEvent;
@@ -34,6 +35,9 @@ import com.microsoft.band.tiles.pages.FlowPanel;
 import com.microsoft.band.tiles.pages.FlowPanelOrientation;
 import com.microsoft.band.tiles.pages.PageData;
 import com.microsoft.band.tiles.pages.PageLayout;
+import com.microsoft.band.tiles.pages.TextBlock;
+import com.microsoft.band.tiles.pages.TextBlockData;
+import com.microsoft.band.tiles.pages.TextBlockFont;
 import com.microsoft.band.tiles.pages.TextButton;
 import com.microsoft.band.tiles.pages.TextButtonData;
 import com.smarttrainer.smarttrainer.models.GetByID;
@@ -209,16 +213,16 @@ public class InstrActivity extends AppCompatActivity {
     private void updatePages() throws BandIOException {
         client.getTileManager().setPages(tileId,
                 new PageData(pageId1, 0)
-                        .update(new FilledButtonData(12, Color.YELLOW))
+                        .update(new TextBlockData(12, "Exercise " + GetByID.getExerName(id)))
                         .update(new TextButtonData(21, "Start")));
-        appendToUI("Press black button on band to start \n\n");
+        appendToUI("Press START button on band to start \n\n");
     }
 
     private PageLayout createButtonLayout() {
         return new PageLayout(
                 new FlowPanel(15, 0, 260, 105, FlowPanelOrientation.VERTICAL)
-                        .addElements(new FilledButton(0, 5, 210, 45).setMargins(0, 5, 0, 0).setId(12).setBackgroundColor(Color.RED))
-                        .addElements(new TextButton(0, 0, 210, 45).setMargins(0, 5, 0, 0).setId(21).setPressedColor(Color.BLUE)));
+                        .addElements(new TextBlock(0, 5, 210, 45, TextBlockFont.SMALL, 0).setId(12).setColor(Color.BLUE))
+                        .addElements(new TextButton(0, 0, 210, 45).setMargins(0, 5, 0, 0).setId(21).setPressedColor(Color.LTGRAY)));
     }
 
     private boolean doesTileExist() throws BandIOException, InterruptedException, BandException {
