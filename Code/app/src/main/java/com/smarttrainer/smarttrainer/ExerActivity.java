@@ -33,6 +33,7 @@ import com.microsoft.band.sensors.BandAccelerometerEvent;
 import com.microsoft.band.sensors.BandAccelerometerEventListener;
 import com.microsoft.band.sensors.SampleRate;
 import com.smarttrainer.smarttrainer.models.BenchJudge;
+import com.smarttrainer.smarttrainer.models.GetByID;
 import com.smarttrainer.smarttrainer.models.MotionJudge;
 import com.smarttrainer.smarttrainer.models.MotionJudgeImpl;
 
@@ -126,6 +127,9 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         Bundle b = getIntent().getExtras();
         id = b.getInt("ID");
 
+        TextView exerName = (TextView) findViewById(R.id.exer_name);
+        exerName.setText(GetByID.getExerName(id));
+        
         GifImageView gifImageView = (GifImageView) findViewById(R.id.exer_gif);
         if (id == 1)
             gifImageView.setImageResource(R.drawable.curl);
@@ -182,13 +186,13 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 values.put("score", 88.88); // TODO: Score
                 long rowId = db.insert("workout_history", null, values);
 
-                Log.d( "rowId", "inserted " + rowId);
+                //Log.d( "rowId", "inserted " + rowId);
                 mj.reset();
             }
         });
 
         ls = new ArrayList<float[]>(4096);
-        recorder.postDelayed(writeArray, 50);
+        recorder.postDelayed(writeArray, 1000);   // TODO: start late according to form id
 
 
         mj = new MotionJudgeImpl(getMotionJudgeModelInputStream(id));
@@ -326,7 +330,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         if (status == TextToSpeech.SUCCESS) {
             tts.setLanguage(Locale.US);
             tts.setSpeechRate((float) 0.5);
-            runner.postDelayed(testExer, 6000);
+            runner.postDelayed(testExer, 7000); // TODO: start late according to form id
         }
     }
 }

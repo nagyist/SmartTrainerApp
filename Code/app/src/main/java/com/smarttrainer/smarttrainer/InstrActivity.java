@@ -48,6 +48,7 @@ public class InstrActivity extends AppCompatActivity {
     TextToSpeech tts;
     private TextView txtStatus;
     private BandClient client = null;
+    private int id;
     private static final UUID tileId = UUID.fromString("cc0D508F-70A3-47D4-BBA3-812BADB1F8Aa");
     private static final UUID pageId1 = UUID.fromString("b1234567-89ab-cdef-0123-456789abcd00");
 
@@ -70,7 +71,7 @@ public class InstrActivity extends AppCompatActivity {
         }
 
         Bundle b = getIntent().getExtras();
-        final int id = b.getInt("ID");
+        id = b.getInt("ID");
 
         TextView exerName = (TextView) findViewById(R.id.exer_name);
         exerName.setText(GetByID.getExerName(id));
@@ -169,6 +170,7 @@ public class InstrActivity extends AppCompatActivity {
                     tts.shutdown();
                 }
                 Intent toExer = new Intent();
+                toExer.putExtra("ID", id);
                 toExer.setClass(InstrActivity.this, ExerActivity.class);
                 startActivity(toExer);
             }
