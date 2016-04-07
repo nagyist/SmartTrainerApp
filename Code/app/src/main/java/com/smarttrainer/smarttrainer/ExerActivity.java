@@ -127,7 +127,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         Bundle b = getIntent().getExtras();
         id = b.getInt("ID");
 
-        TextView exerName = (TextView) findViewById(R.id.exer_name);
+        TextView exerName = (TextView) findViewById(R.id.exercise_name);
         exerName.setText(GetByID.getExerName(id));
         
         GifImageView gifImageView = (GifImageView) findViewById(R.id.exer_gif);
