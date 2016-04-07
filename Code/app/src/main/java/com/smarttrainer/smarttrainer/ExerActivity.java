@@ -103,6 +103,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // TODO: delete this & add a service!
         setContentView(R.layout.activity_exer2);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.instr_toolbar);
@@ -169,6 +170,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // TODO: delete this & add a service!
                 runner.removeCallbacks(testExer);
                 recorder.removeCallbacks(writeArray);
 
