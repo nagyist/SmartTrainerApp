@@ -221,8 +221,8 @@ public class InstrActivity extends AppCompatActivity {
     private PageLayout createButtonLayout() {
         return new PageLayout(
                 new FlowPanel(15, 0, 260, 105, FlowPanelOrientation.VERTICAL)
-                        .addElements(new TextBlock(0, 5, 210, 45, TextBlockFont.SMALL, 0).setId(12).setColor(Color.BLUE))
-                        .addElements(new TextButton(0, 0, 210, 45).setMargins(0, 5, 0, 0).setId(21).setPressedColor(Color.LTGRAY)));
+                        .addElements(new TextBlock(0, 5, 210, 45, TextBlockFont.SMALL, 0).setId(12).setColor(Color.rgb(0, 185, 242)))
+                        .addElements(new TextButton(0, 0, 250, 55).setMargins(0, 5, 0, 0).setId(21).setPressedColor(Color.LTGRAY)));
     }
 
     private boolean doesTileExist() throws BandIOException, InterruptedException, BandException {

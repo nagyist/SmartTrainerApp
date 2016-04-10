@@ -55,6 +55,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private TextView curRep;
     private TextView prevBest;
     private boolean mute = false;
+    private int curSetCount;
 
     private double curAx = 0;
     private double curAy = 0;
@@ -88,18 +89,20 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
     MotionJudge mj;
     private TextToSpeech tts;
-    private int totalCount = 0;
+    private int finished = 0;
     private static final int TTS_REQUEST_CODE = 903;
     private Handler runner = new Handler();
     Runnable testExer = new Runnable(){
         public void run(){
             String toSpeak = mj.judgeMotion(ls);
-            totalCount+=mj.getCount(ls);
+            finished += mj.getCount(ls);
             if (!mute)
                 tts.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
-
+            appendToUI("" + (curSetCount + 1), String.valueOf(finished), (float) 66.88, false);
             ls.clear();
             runner.postDelayed( this, 10000 );
+            if (finished >= 8)
+                tts.speak("Mission complete! Please stop now.", TextToSpeech.QUEUE_FLUSH, null);
         }
     };
     @Override
@@ -145,25 +148,25 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         Cursor cursor = db.rawQuery(selectSet, new String[]{curDay, String.valueOf(id)});
 
         curSet = (TextView) findViewById(R.id.cur_set);
-        final int curSetCount = cursor.getCount();
+        curSetCount = cursor.getCount();
         curSet.setText(String.valueOf(curSetCount));
 
         curScore = (TextView) findViewById(R.id.cur_score);
         prevBest = (TextView) findViewById(R.id.prev_best_num);
         curRep = (TextView) findViewById(R.id.cur_rep);
         float maxScore = 0;
-        int curReps = 0;
-        if (cursor != null)
+        //int curReps = 0;
+        //if (cursor != null)
             if (cursor.moveToFirst())
             {
                 do
                 {
                     maxScore = Math.max(maxScore, cursor.getFloat(cursor.getColumnIndex("score")));
-                    curReps += cursor.getInt(cursor.getColumnIndex("reps"));
+                    //curReps += cursor.getInt(cursor.getColumnIndex("reps"));
                 } while (cursor.moveToNext());
             }
         prevBest.setText(maxScore + "%");
-        curRep.setText(String.valueOf(curReps));
+        //curRep.setText(String.valueOf(curReps));
         cursor.close();
 
         new AccelerometerSubscriptionTask().execute();
@@ -176,20 +179,18 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 runner.removeCallbacks(testExer);
                 recorder.removeCallbacks(writeArray);
 
-//                int finished = 0;
-                // TODO: DB update and display
-                appendToUI("" + (curSetCount + 1), String.valueOf(totalCount), (float) 66.88, false);
-                //curRep.setText(Integer.valueOf(curRep.getText().toString()) + mj.getCount());
+                // TODO: DB update and display score
+                appendToUI("" + (curSetCount + 1), String.valueOf(finished), (float) 66.88, false);
 
-                // TODO: if (finished > 0)
-                SQLiteDatabase db = dbHelper.getWritableDatabase(); // write access
+                if (finished > 0) {
+                    SQLiteDatabase db = dbHelper.getWritableDatabase(); // write access
 
-                ContentValues values = new ContentValues();
-                values.put("formID", id);
-                values.put("reps", 5); // TODO: finished
-                values.put("score", 88.88); // TODO: Score
-                long rowId = db.insert("workout_history", null, values);
-
+                    ContentValues values = new ContentValues();
+                    values.put("formID", id);
+                    values.put("reps", finished);
+                    values.put("score", 88.88); // TODO: Score
+                    long rowId = db.insert("workout_history", null, values);
+                }
                 //Log.d( "rowId", "inserted " + rowId);
                 mj.reset();
             }
