@@ -49,7 +49,7 @@ public class MotionJudgeImpl implements MotionJudge{
             } else if(motionClass==2){
                 return "Too Fast";
             } else if(motionClass==3){
-                return "Out of direction";
+                return "Wrong, your palm should be facing up.";
             } else{
                 return "Error";
             }
