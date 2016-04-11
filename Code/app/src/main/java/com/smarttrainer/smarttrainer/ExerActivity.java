@@ -105,8 +105,10 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
             appendToUI("" + (curSetCount + 1), String.valueOf(finished), (float) 66.88, false);
             ls.clear();
             runner.postDelayed( this, 10000 );
-            if (finished >= 8)  // TODO: from preference or db
+            if (finished >= GetByID.getRequiredRep(id))
                 tts.speak("Mission complete! Please stop now.", TextToSpeech.QUEUE_FLUSH, null);
+            else if (finished > GetByID.getRequiredRep(id) / 2 && toSpeak == "Too Slow.")
+                tts.speak("Carry on!", TextToSpeech.QUEUE_FLUSH, null);
         }
     };
     @Override

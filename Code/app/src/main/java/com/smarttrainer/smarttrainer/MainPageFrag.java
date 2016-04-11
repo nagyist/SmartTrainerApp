@@ -8,7 +8,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
+
+import com.smarttrainer.smarttrainer.models.GetByID;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,6 +87,19 @@ public class MainPageFrag extends Fragment {
                 }
             });
 
+            TextView pushUpReq = (TextView) view.findViewById(R.id.push_up_required);
+            pushUpReq.setText("1 set  " + GetByID.getRequiredRep(3) + " reps");
+            LinearLayout pushUp = (LinearLayout) view.findViewById(R.id.push_up_button);
+            pushUp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent toInstr = new Intent();
+                    toInstr.putExtra("ID", 3);
+                    toInstr.setClass(getActivity(), InstrActivity.class);
+                    startActivity(toInstr);
+                }
+            });
+
             LinearLayout sitUp = (LinearLayout) view.findViewById(R.id.sit_up_button);
             sitUp.setOnClickListener(new View.OnClickListener()
             {
@@ -93,6 +113,45 @@ public class MainPageFrag extends Fragment {
             });
             return view;
         }
+
+        if (pageN == 2) {
+            View view = inflater.inflate(R.layout.fragment_setting, container, false);
+
+            final TextView repsPerSet = (TextView) view.findViewById(R.id.reps_per_set);
+            SeekBar tickStartSeek = (SeekBar) view.findViewById(R.id.press_up_requirement);
+            tickStartSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar tickCountSeek, int progress, boolean fromUser) {
+                    repsPerSet.setText("Reps per set: " + progress);
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                }
+            });
+
+            Button saveRep = (Button) view.findViewById(R.id.push_up_save_button);
+            saveRep.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+
+            Button sharePressUp = (Button) view.findViewById(R.id.share_press_up);
+            sharePressUp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+            return view;
+        }
+
         else if (pageN == 3) {
             View view = inflater.inflate(R.layout.fragment_summary, container, false);
             FragmentTabHost fragTabHost = (FragmentTabHost) view.findViewById(android.R.id.tabhost);

@@ -14,6 +14,8 @@ public class GetByID {
             return "Curl";
         else if (id == 2)
             return "Sit-up";
+        else if (id == 3)
+            return "Push-up";
         return null;
     }
 
@@ -44,5 +46,18 @@ public class GetByID {
         else if (id == 1)
             return "Use the right arm to pick up the dumbbell and place the back of that upper arm on top of your inner right thigh (around three and a half inches away from the front of the knee). Rotate the palm of the hand until it is facing forward away from your thigh. Your arm should be extended at arms length and the dumbbell should be above the floor.";
         return "Please see the picture.";
+    }
+
+    public static int getRequiredRep(int id)    // TODO: from preference or db
+    {
+        if (id == 0)
+            return 6;
+        else if (id == 1)
+            return 15;
+        else if (id == 2)
+            return 30;
+        else if (id == 3)
+            return 15;
+        return 0;
     }
 }

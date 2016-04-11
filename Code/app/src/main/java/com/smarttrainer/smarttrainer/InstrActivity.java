@@ -101,11 +101,18 @@ public class InstrActivity extends AppCompatActivity {
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*if (tts != null) {
-                    tts.stop();
-                    tts.shutdown();
-                }*/
-                //tts.speak("Start now!", TextToSpeech.QUEUE_FLUSH, null);
+                if (tts == null)
+                    tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                        @Override
+                        public void onInit(int status) {
+                            if(status != TextToSpeech.ERROR) {
+                                tts.setLanguage(Locale.US);
+                                String toSpeak = GetByID.getInst(getCurId());
+                                tts.setSpeechRate((float) 0.7);
+                                tts.speak("Start now!", TextToSpeech.QUEUE_FLUSH, null);
+                            }
+                        }
+                    });
                 Intent toExer = new Intent();
                 toExer.putExtra("ID", id);
                 toExer.setClass(InstrActivity.this, ExerActivity.class);
@@ -174,10 +181,18 @@ public class InstrActivity extends AppCompatActivity {
                 TileButtonEvent buttonData = intent.getParcelableExtra(TileEvent.TILE_EVENT_DATA);
                 appendToUI("Button event received\n" + buttonData.toString() + "\n\n");
 
-                if (tts != null) {
-                    tts.stop();
-                    tts.shutdown();
-                }
+                if (tts == null)
+                    tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                        @Override
+                        public void onInit(int status) {
+                            if(status != TextToSpeech.ERROR) {
+                                tts.setLanguage(Locale.US);
+                                String toSpeak = GetByID.getInst(getCurId());
+                                tts.setSpeechRate((float) 0.7);
+                                tts.speak("Start now!", TextToSpeech.QUEUE_FLUSH, null);
+                            }
+                        }
+                    });
                 Intent toExer = new Intent();
                 toExer.putExtra("ID", id);
                 toExer.setClass(InstrActivity.this, ExerActivity.class);
