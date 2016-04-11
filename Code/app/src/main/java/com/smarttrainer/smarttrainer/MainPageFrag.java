@@ -94,14 +94,14 @@ public class MainPageFrag extends Fragment {
 
             DBHelper dbHelper = new DBHelper(getContext());
             SQLiteDatabase db = dbHelper.getReadableDatabase();
-            String selectReqFreq = "SELECT repsReq form_setting WHERE formID = 3";
-            /*Cursor cursor = db.rawQuery(selectReqFreq, new String[]{});
+            String selectReqFreq = "SELECT repsReq FROM form_setting WHERE formID = 3";
+            Cursor cursor = db.rawQuery(selectReqFreq, new String[]{});
             if (cursor != null)
                 if (cursor.moveToFirst())
                 {
                     TextView pushUpReq = (TextView) view.findViewById(R.id.push_up_required);
                     pushUpReq.setText("1 set  " + cursor.getInt(0) + " reps");
-                }*/
+                }
 
             LinearLayout pushUp = (LinearLayout) view.findViewById(R.id.push_up_button);
             pushUp.setOnClickListener(new View.OnClickListener() {
@@ -149,15 +149,13 @@ public class MainPageFrag extends Fragment {
                 }
             });
 
-            final DBHelper dbHelper = new DBHelper(getContext());
-            SQLiteDatabase db = dbHelper.getReadableDatabase();
-            //db.execSQL("UPDATE form_setting set repsReq=? WHERE formID=3", new Object[]{pushUpRepReq});
-
             Button saveRep = (Button) view.findViewById(R.id.push_up_save_button);
             saveRep.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    final DBHelper dbHelper = new DBHelper(getContext());
+                    SQLiteDatabase db = dbHelper.getReadableDatabase();
+                    db.execSQL("UPDATE form_setting set repsReq=? WHERE formID=3", new Object[]{pushUpRepReq});
                 }
             });
 
