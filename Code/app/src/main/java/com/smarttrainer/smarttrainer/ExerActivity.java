@@ -101,7 +101,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
             appendToUI("" + (curSetCount + 1), String.valueOf(finished), (float) 66.88, false);
             ls.clear();
             runner.postDelayed( this, 10000 );
-            if (finished >= 8)
+            if (finished >= 8)  // TODO: from preference or db
                 tts.speak("Mission complete! Please stop now.", TextToSpeech.QUEUE_FLUSH, null);
         }
     };
@@ -135,10 +135,11 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
         TextView exerName = (TextView) findViewById(R.id.exercise_name);
         exerName.setText(GetByID.getExerName(id));
-        
+
+        // TODO: use a DB for this if there is a huge shit of forms
         GifImageView gifImageView = (GifImageView) findViewById(R.id.exer_gif);
-        if (id == 1)
-            gifImageView.setImageResource(R.drawable.curl);
+        if (id != 0)
+            gifImageView.setImageResource(GetByID.getGIF(id));
 
         final DBHelper dbHelper = new DBHelper(getApplicationContext());
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -156,7 +157,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         curRep = (TextView) findViewById(R.id.cur_rep);
         float maxScore = 0;
         //int curReps = 0;
-        //if (cursor != null)
+        if (cursor != null)
             if (cursor.moveToFirst())
             {
                 do
@@ -192,7 +193,6 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
                     long rowId = db.insert("workout_history", null, values);
                 }
                 //Log.d( "rowId", "inserted " + rowId);
-                mj.reset();
             }
         });
 

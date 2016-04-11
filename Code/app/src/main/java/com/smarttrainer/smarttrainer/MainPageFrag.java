@@ -60,7 +60,6 @@ public class MainPageFrag extends Fragment {
             LinearLayout benchPress = (LinearLayout) view.findViewById(R.id.bench_press_button);
             benchPress.setOnClickListener(new View.OnClickListener()
             {
-
                 @Override
                 public void onClick(View v) {
                     Intent toInstr = new Intent();
@@ -71,12 +70,23 @@ public class MainPageFrag extends Fragment {
             });
 
             LinearLayout curl = (LinearLayout) view.findViewById(R.id.dumbbell_lifting_button);
-            curl.setOnClickListener(new View.OnClickListener()
-            {
+            curl.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent toInstr = new Intent();
                     toInstr.putExtra("ID", 1);
+                    toInstr.setClass(getActivity(), InstrActivity.class);
+                    startActivity(toInstr);
+                }
+            });
+
+            LinearLayout sitUp = (LinearLayout) view.findViewById(R.id.sit_up_button);
+            sitUp.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v) {
+                    Intent toInstr = new Intent();
+                    toInstr.putExtra("ID", 2);
                     toInstr.setClass(getActivity(), InstrActivity.class);
                     startActivity(toInstr);
                 }

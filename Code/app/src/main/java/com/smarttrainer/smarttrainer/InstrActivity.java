@@ -52,7 +52,7 @@ public class InstrActivity extends AppCompatActivity {
     TextToSpeech tts;
     private TextView txtStatus;
     private BandClient client = null;
-    private int id;
+    private int id = 0;
     private static final UUID tileId = UUID.fromString("cc0D508F-70A3-47D4-BBA3-812BADB1F8Aa");
     private static final UUID pageId1 = UUID.fromString("b1234567-89ab-cdef-0123-456789abcd00");
 
@@ -81,8 +81,12 @@ public class InstrActivity extends AppCompatActivity {
         exerName.setText(GetByID.getExerName(id));
 
         GifImageView gifImageView = (GifImageView) findViewById(R.id.gif_view);
-        if (id == 1)
-            gifImageView.setImageResource(R.drawable.curl);
+        if (id != 0)
+            gifImageView.setImageResource(GetByID.getGIF(id));
+
+        TextView textView = (TextView) findViewById(R.id.muscles);
+        if (id != 0)
+            textView.setText(GetByID.getMuscle(id));
 
         Button procedure = (Button) findViewById(R.id.prcd_btn);
         procedure.setOnClickListener(new View.OnClickListener(){
@@ -97,10 +101,11 @@ public class InstrActivity extends AppCompatActivity {
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (tts != null) {
+                /*if (tts != null) {
                     tts.stop();
                     tts.shutdown();
-                }
+                }*/
+                //tts.speak("Start now!", TextToSpeech.QUEUE_FLUSH, null);
                 Intent toExer = new Intent();
                 toExer.putExtra("ID", id);
                 toExer.setClass(InstrActivity.this, ExerActivity.class);
@@ -290,6 +295,11 @@ public class InstrActivity extends AppCompatActivity {
         return true;
     }
 
+    public int getCurId()
+    {
+        return id;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -302,12 +312,7 @@ public class InstrActivity extends AppCompatActivity {
                 public void onInit(int status) {
                     if(status != TextToSpeech.ERROR) {
                         tts.setLanguage(Locale.US);
-                        String toSpeak = "Lie on your back with your feet flat on the floor. If" +
-                                "your feet don’t reach the floor, use a stable board to" +
-                                "accommodate size. Grasp the barbell with a wider" +
-                                "than shoulder-width grip, wrapping thumbs around" +
-                                "the bar. Hold the barbell at arm’s length above your" +
-                                "upper-chest area.";
+                        String toSpeak = GetByID.getInst(getCurId());
                         tts.setSpeechRate((float) 0.7);
                         tts.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
                     }
