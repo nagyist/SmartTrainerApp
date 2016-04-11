@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Press-up setup" />
+    <TextView
+        android:id="@+id/reps_per_set"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reps per set" />
+
+    <SeekBar
+        android:id="@+id/press_up_requirement"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="15"/>
+    <Button
+        android:id="@+id/push_up_save_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="save"/>
+    <Button
+        android:id="@+id/share_press_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="share"/>
+</LinearLayout>

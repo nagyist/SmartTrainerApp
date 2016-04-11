@@ -21,11 +21,14 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE workout_history(timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP PRIMARY KEY,"
                 + "formID Integer, reps INTEGER, score FLOAT)");
+        db.execSQL("CREATE TABLE form_setting(formID Integer PRIMARY KEY, repsReq INTEGER, freq INTEGER)");
+        db.execSQL("INSERT INTO form_setting(formID, repsReq, freq) values(3, 40, 0.5)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS workout_history");
+        db.execSQL("DROP TABLE IF EXISTS form_setting");
         onCreate(db);
     }
 

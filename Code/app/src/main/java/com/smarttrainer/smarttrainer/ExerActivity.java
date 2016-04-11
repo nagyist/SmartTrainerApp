@@ -1,7 +1,6 @@
 package com.smarttrainer.smarttrainer;
 
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -18,10 +17,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.microsoft.band.BandClient;
 import com.microsoft.band.BandClientManager;
@@ -32,7 +29,6 @@ import com.microsoft.band.ConnectionState;
 import com.microsoft.band.sensors.BandAccelerometerEvent;
 import com.microsoft.band.sensors.BandAccelerometerEventListener;
 import com.microsoft.band.sensors.SampleRate;
-import com.smarttrainer.smarttrainer.models.BenchJudge;
 import com.smarttrainer.smarttrainer.models.GetByID;
 import com.smarttrainer.smarttrainer.models.MotionJudge;
 import com.smarttrainer.smarttrainer.models.MotionJudgeImpl;
@@ -41,7 +37,6 @@ import com.smarttrainer.smarttrainer.models.MotionJudgeSelfDefinedSpeedImpl;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -148,7 +143,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
             gifImageView.setImageResource(GetByID.getGIF(id));
 
         final DBHelper dbHelper = new DBHelper(getApplicationContext());
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         String selectSet = "SELECT reps, score FROM workout_history WHERE timestamp > ? AND formID = ?";
         String curDay = getToday();

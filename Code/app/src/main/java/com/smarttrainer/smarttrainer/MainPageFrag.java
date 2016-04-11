@@ -1,6 +1,8 @@
 package com.smarttrainer.smarttrainer;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTabHost;
@@ -30,6 +32,8 @@ public class MainPageFrag extends Fragment {
     private int pageN;
     private static String ARG_PAGE = "ARG_PAGE";
     private View indicatorInSum = null;
+
+    private int pushUpRepReq = 0;
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -87,8 +91,18 @@ public class MainPageFrag extends Fragment {
                 }
             });
 
-            TextView pushUpReq = (TextView) view.findViewById(R.id.push_up_required);
-            pushUpReq.setText("1 set  " + GetByID.getRequiredRep(3) + " reps");
+
+            DBHelper dbHelper = new DBHelper(getContext());
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            String selectReqFreq = "SELECT repsReq form_setting WHERE formID = 3";
+            /*Cursor cursor = db.rawQuery(selectReqFreq, new String[]{});
+            if (cursor != null)
+                if (cursor.moveToFirst())
+                {
+                    TextView pushUpReq = (TextView) view.findViewById(R.id.push_up_required);
+                    pushUpReq.setText("1 set  " + cursor.getInt(0) + " reps");
+                }*/
+
             LinearLayout pushUp = (LinearLayout) view.findViewById(R.id.push_up_button);
             pushUp.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -118,11 +132,12 @@ public class MainPageFrag extends Fragment {
             View view = inflater.inflate(R.layout.fragment_setting, container, false);
 
             final TextView repsPerSet = (TextView) view.findViewById(R.id.reps_per_set);
-            SeekBar tickStartSeek = (SeekBar) view.findViewById(R.id.press_up_requirement);
-            tickStartSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            SeekBar pushUpSeek = (SeekBar) view.findViewById(R.id.press_up_requirement);
+            pushUpSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar tickCountSeek, int progress, boolean fromUser) {
                     repsPerSet.setText("Reps per set: " + progress);
+                    pushUpRepReq = progress;
                 }
 
                 @Override
@@ -133,6 +148,10 @@ public class MainPageFrag extends Fragment {
                 public void onStopTrackingTouch(SeekBar seekBar) {
                 }
             });
+
+            final DBHelper dbHelper = new DBHelper(getContext());
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            //db.execSQL("UPDATE form_setting set repsReq=? WHERE formID=3", new Object[]{pushUpRepReq});
 
             Button saveRep = (Button) view.findViewById(R.id.push_up_save_button);
             saveRep.setOnClickListener(new View.OnClickListener() {
