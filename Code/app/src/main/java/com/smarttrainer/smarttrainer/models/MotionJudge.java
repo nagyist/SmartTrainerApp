@@ -7,7 +7,6 @@ import java.util.List;
  */
 public interface MotionJudge {
     double Fs = 20;
-    String judgeMotion(List<float[]> sensorRawData);
-    void reset();
+    JudgeResult judgeMotion(List<float[]> sensorRawData);
     int getCount(List<float[]> sensorRawData);
 }

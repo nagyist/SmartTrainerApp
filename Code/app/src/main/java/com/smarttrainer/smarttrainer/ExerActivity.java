@@ -36,6 +36,7 @@ import com.smarttrainer.smarttrainer.models.BenchJudge;
 import com.smarttrainer.smarttrainer.models.GetByID;
 import com.smarttrainer.smarttrainer.models.MotionJudge;
 import com.smarttrainer.smarttrainer.models.MotionJudgeImpl;
+import com.smarttrainer.smarttrainer.models.MotionJudgeSelfDefinedSpeedImpl;
 
 import java.io.InputStream;
 import java.sql.Timestamp;
@@ -60,6 +61,9 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private double curAx = 0;
     private double curAy = 0;
     private double curAz = 0;
+
+    private float minFreq = 0f;
+    private float maxFreq = 0f;
 
     List<float[]> ls;
 
@@ -94,7 +98,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private Handler runner = new Handler();
     Runnable testExer = new Runnable(){
         public void run(){
-            String toSpeak = mj.judgeMotion(ls);
+            String toSpeak = mj.judgeMotion(ls).getDescription();
             finished += mj.getCount(ls);
             if (!mute)
                 tts.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
@@ -200,7 +204,16 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         recorder.postDelayed(writeArray, 1000);   // TODO: start late according to form id
 
 
-        mj = new MotionJudgeImpl(getMotionJudgeModelInputStream(id));
+        mj = getMotionJudgerById(id);
+
+    }
+
+    private MotionJudge getMotionJudgerById(int formId){
+        if(formId==-1){
+            return new MotionJudgeSelfDefinedSpeedImpl(this.minFreq,this.maxFreq);
+        } else {
+            return new MotionJudgeImpl(getMotionJudgeModelInputStream(id));
+        }
 
     }
 

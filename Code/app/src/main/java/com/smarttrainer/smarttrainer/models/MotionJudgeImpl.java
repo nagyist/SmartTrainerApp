@@ -16,20 +16,17 @@ import java.util.List;
  * Created by fan on 4/6/16.
  */
 public class MotionJudgeImpl implements MotionJudge{
-    private List<float[]> allSensorRawData;
     private FastVector attributes;
     private Classifier myClassifier;
 
     public MotionJudgeImpl(InputStream model){
-        allSensorRawData = new ArrayList<>();
         attributes = buildAttribute();
         try {
             myClassifier = (Classifier) weka.core.SerializationHelper.read(model);
         } catch (Exception e){}
     }
 
-    public String judgeMotion(List<float[]> sensorRawData){
-        this.allSensorRawData.addAll(sensorRawData);
+    public JudgeResult judgeMotion(List<float[]> sensorRawData){
         Instance instance = new Instance(7);
         double[] frequencyAndAmpl = this.getFrequencyAtMaxAmplitude(sensorRawData);
         for (int k = 0; k < 6; k++) {
@@ -43,20 +40,21 @@ public class MotionJudgeImpl implements MotionJudge{
         try {
             int motionClass = (int)(Math.round(myClassifier.classifyInstance(training.instance(0))));
             if(motionClass==0){
-                return "Too Slow";
+                return new JudgeResult("Too Slow", 60.0f);
             } else if(motionClass==1){
-                return "Good";
+                return new JudgeResult("Good", 100.0f);
             } else if(motionClass==2){
-                return "Too Fast";
+                return new JudgeResult("Too Fast", 80);
             } else if(motionClass==3){
-                return "Wrong , your palm should be facing up.";
+                return new JudgeResult("Wrong , your palm should be facing up.", 50);
             } else{
-                return "Error";
+                return new JudgeResult("Error", 0f);
             }
         } catch (Exception e){
-            return "Error";
+            return new JudgeResult("Error", 0f);
         }
     }
+
 
 
     public int getCount(List<float[]> sensorRawData) {
@@ -70,12 +68,7 @@ public class MotionJudgeImpl implements MotionJudge{
     }
 
 
-    public void reset() {
-        this.allSensorRawData.clear();
-    }
-
-
-    private double[] getFrequencyAtMaxAmplitude(List<float[]> sensorRawData){
+    protected double[] getFrequencyAtMaxAmplitude(List<float[]> sensorRawData){
         double[] feature = new double[6];
 
         for (int j = 0; j < 3; j++) {
