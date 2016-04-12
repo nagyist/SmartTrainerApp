@@ -25,6 +25,7 @@ import java.util.List;
 public class ChallengeListFragment extends DialogFragment {
     ArrayList<String> form_id;
     ArrayList<String> challenger;
+    ArrayList<String> challenger_id;
     ArrayList<String> maxFreq;
     ArrayList<String> rep;
 
@@ -36,6 +37,7 @@ public class ChallengeListFragment extends DialogFragment {
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         form_id = getArguments().getStringArrayList("form_id");
         challenger = getArguments().getStringArrayList("challenger");
+        challenger_id = getArguments().getStringArrayList("challenger_id");
         maxFreq = getArguments().getStringArrayList("maxFreq");
         rep = getArguments().getStringArrayList("rep");
 
@@ -64,7 +66,7 @@ public class ChallengeListFragment extends DialogFragment {
                 Intent toInstr = new Intent();
                 toInstr.putExtra("ID", form_id.get(mSelectedItems.get(0))); // form ID
                 toInstr.putExtra("freq", maxFreq.get(mSelectedItems.get(0)));
-                toInstr.putExtra("creator", challenger.get(mSelectedItems.get(0)));
+                toInstr.putExtra("creator", challenger_id.get(mSelectedItems.get(0)));
                 toInstr.setClass(getActivity(), InstrActivity.class);
                 startActivity(toInstr);
             }

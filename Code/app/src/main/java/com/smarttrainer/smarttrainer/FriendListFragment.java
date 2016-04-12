@@ -64,7 +64,7 @@ public class FriendListFragment extends DialogFragment {
                 RequestQueue queue = Volley.newRequestQueue(getActivity());
                 String url = "http://52.3.117.15:8000/user/create_challenge?"
                         + "challenger=" + ExistingUser.getUserName(FriendListFragment.this.getContext())
-                        + "&form_id=" + "0"
+                        + "&form_id=" + "3"
                         + "&min_frequency=" + minFreq
                         + "&max_frequency=" + maxFreq
                         + "&repetition=" + rep

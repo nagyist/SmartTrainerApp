@@ -1,6 +1,7 @@
 package com.smarttrainer.smarttrainer;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -21,6 +22,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 import com.microsoft.band.BandClient;
 import com.microsoft.band.BandClientManager;
 import com.microsoft.band.BandException;
@@ -35,6 +40,8 @@ import com.smarttrainer.smarttrainer.models.JudgeResult;
 import com.smarttrainer.smarttrainer.models.MotionJudge;
 import com.smarttrainer.smarttrainer.models.MotionJudgeImpl;
 import com.smarttrainer.smarttrainer.models.MotionJudgeSelfDefinedSpeedImpl;
+
+import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.sql.Timestamp;
@@ -152,6 +159,12 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
             minFreq = freq / 2;
             maxFreq = freq;
         }
+        float tempFreq = b.getFloat("freq");
+        if (tempFreq != 0f)
+        {
+            minFreq = tempFreq / 2;
+            maxFreq = tempFreq;
+        }
 
         TextView exerName = (TextView) findViewById(R.id.exercise_name);
         exerName.setText(GetByID.getExerName(id));
@@ -216,16 +229,34 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 Toast.makeText(ExerActivity.this, "Workout saved!", Toast.LENGTH_SHORT).show();
 
                 if (b.getString("creator") != null && finished > b.getInt("Req"))
-                    Log.d("send request", b.getString("creator"));
+                {
+                    String loginUrl = "http://52.3.117.15:8000/user/give_challenge_feedback?challenger="
+                            + b.getString("creator") + "&challengee=" + ExistingUser.getUserName(getApplicationContext())
+                            + "&score=" + curScore;
+                    RequestQueue requestQueue = Volley.newRequestQueue(ExerActivity.this);
+                    JsonObjRequest jsObjRequest = new JsonObjRequest(loginUrl, null,
+                            new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    //Log.d("debugging", "to server success");
+                                    Toast.makeText(getApplicationContext(), "Challenge: " + response.toString(),Toast.LENGTH_SHORT).show();
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Toast.makeText(getApplicationContext(), "Failed to connect the server",Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                    requestQueue.add(jsObjRequest);
+                }
             }
         });
 
         ls = new ArrayList<float[]>(4096);
         recorder.postDelayed(writeArray, 1000);   // TODO: start late according to form id
 
-
         mj = getMotionJudgerById(id);
-
     }
 
     private MotionJudge getMotionJudgerById(int formId){
@@ -235,7 +266,6 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         else {
             return new MotionJudgeImpl(getMotionJudgeModelInputStream(id));
         }
-
     }
 
     private InputStream getMotionJudgeModelInputStream(int formId){

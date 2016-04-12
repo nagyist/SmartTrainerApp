@@ -122,10 +122,7 @@ public class InstrActivity extends AppCompatActivity {
                     tts.shutdown();
                 }
 
-                Intent toExer = new Intent();
-                toExer.putExtra("ID", id);
-                toExer.setClass(InstrActivity.this, ExerActivity.class);
-                startActivity(toExer);
+                toExer();
             }
         });
 
@@ -208,16 +205,21 @@ public class InstrActivity extends AppCompatActivity {
                     tts.shutdown();
                 }
 
-                Intent toExer = new Intent();
-                toExer.putExtras(b);
-                toExer.setClass(InstrActivity.this, ExerActivity.class);
-                startActivity(toExer);
+                toExer();
             }
             /*else if (intent.getAction() == TileEvent.ACTION_TILE_CLOSED) {
                 TileEvent tileCloseData = intent.getParcelableExtra(TileEvent.TILE_EVENT_DATA);
                 appendToUI("Tile close event received\n" + tileCloseData.toString() + "\n\n");
             }*/
         }
+    }
+
+    private void toExer()
+    {
+        Intent toExer = new Intent();
+        toExer.putExtras(b);
+        toExer.setClass(InstrActivity.this, ExerActivity.class);
+        startActivity(toExer);
     }
 
     private boolean addTile() throws Exception {

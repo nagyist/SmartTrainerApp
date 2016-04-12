@@ -140,8 +140,7 @@ public class MainPageFrag extends Fragment {
                     toInstr.putExtra("freq", 0.5);
                     toInstr.putExtra("creator", "");
                     toInstr.setClass(getActivity(), InstrActivity.class);
-                    startActivity(toInstr);
-                     */
+                    startActivity(toInstr);*/
                 }
             });
 
