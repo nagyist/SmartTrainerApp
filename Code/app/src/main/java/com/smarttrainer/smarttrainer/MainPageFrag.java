@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.smarttrainer.smarttrainer.models.GetByID;
 
@@ -33,7 +34,8 @@ public class MainPageFrag extends Fragment {
     private static String ARG_PAGE = "ARG_PAGE";
     private View indicatorInSum = null;
 
-    private int pushUpRepReq = 0;
+    private int pushUpRepReq = 15;
+    private float secPerPushReq = 2;
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -92,16 +94,8 @@ public class MainPageFrag extends Fragment {
             });
 
 
-            DBHelper dbHelper = new DBHelper(getContext());
-            SQLiteDatabase db = dbHelper.getReadableDatabase();
-            String selectReqFreq = "SELECT repsReq FROM form_setting WHERE formID = 3";
-            Cursor cursor = db.rawQuery(selectReqFreq, new String[]{});
-            if (cursor != null)
-                if (cursor.moveToFirst())
-                {
-                    TextView pushUpReq = (TextView) view.findViewById(R.id.push_up_required);
-                    pushUpReq.setText("1 set  " + cursor.getInt(0) + " reps");
-                }
+            TextView pushUpReq = (TextView) view.findViewById(R.id.push_up_required);
+            pushUpReq.setText("1 set  " + DBHelper.selectReq(getContext(), 3) + " reps");
 
             LinearLayout pushUp = (LinearLayout) view.findViewById(R.id.push_up_button);
             pushUp.setOnClickListener(new View.OnClickListener() {
@@ -135,9 +129,27 @@ public class MainPageFrag extends Fragment {
             SeekBar pushUpSeek = (SeekBar) view.findViewById(R.id.press_up_requirement);
             pushUpSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
-                public void onProgressChanged(SeekBar tickCountSeek, int progress, boolean fromUser) {
+                public void onProgressChanged(SeekBar thisSeek, int progress, boolean fromUser) {
                     repsPerSet.setText("Reps per set: " + progress);
                     pushUpRepReq = progress;
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                }
+            });
+
+            final TextView freq = (TextView) view.findViewById(R.id.freq);
+            SeekBar freqSeek = (SeekBar) view.findViewById(R.id.frequency_requirement);
+            freqSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar thisSeek, int progress, boolean fromUser) {
+                    freq.setText("Seconds per rep: " + progress);
+                    secPerPushReq = progress;
                 }
 
                 @Override
@@ -153,14 +165,23 @@ public class MainPageFrag extends Fragment {
             saveRep.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Toast.makeText(getActivity(), "Successfully saved in database", Toast.LENGTH_SHORT).show();
                     final DBHelper dbHelper = new DBHelper(getContext());
                     SQLiteDatabase db = dbHelper.getReadableDatabase();
-                    db.execSQL("UPDATE form_setting set repsReq=? WHERE formID=3", new Object[]{pushUpRepReq});
+                    db.execSQL("UPDATE form_setting set repsReq=?, freq=? WHERE formID=3", new Object[]{pushUpRepReq, 1/secPerPushReq});
                 }
             });
 
             Button sharePressUp = (Button) view.findViewById(R.id.share_press_up);
             sharePressUp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+
+            Button getFinishedList = (Button) view.findViewById(R.id.get_finished_list);
+            getFinishedList.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 

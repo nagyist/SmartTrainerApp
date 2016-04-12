@@ -19,6 +19,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.microsoft.band.BandClient;
 import com.microsoft.band.BandClientManager;
@@ -30,6 +31,7 @@ import com.microsoft.band.sensors.BandAccelerometerEvent;
 import com.microsoft.band.sensors.BandAccelerometerEventListener;
 import com.microsoft.band.sensors.SampleRate;
 import com.smarttrainer.smarttrainer.models.GetByID;
+import com.smarttrainer.smarttrainer.models.JudgeResult;
 import com.smarttrainer.smarttrainer.models.MotionJudge;
 import com.smarttrainer.smarttrainer.models.MotionJudgeImpl;
 import com.smarttrainer.smarttrainer.models.MotionJudgeSelfDefinedSpeedImpl;
@@ -52,13 +54,15 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private TextView prevBest;
     private boolean mute = false;
     private int curSetCount;
+    private float score = 0;
+    private int slots = 0;
 
     private double curAx = 0;
     private double curAy = 0;
     private double curAz = 0;
 
-    private float minFreq = 0f;
-    private float maxFreq = 0f;
+    private float minFreq = 0.2f;
+    private float maxFreq = 0.5f;
 
     List<float[]> ls;
 
@@ -85,6 +89,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         }
     };
 
+    private int requiredRep;
 
     MotionJudge mj;
     private TextToSpeech tts;
@@ -93,16 +98,19 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private Handler runner = new Handler();
     Runnable testExer = new Runnable(){
         public void run(){
-            String toSpeak = mj.judgeMotion(ls).getDescription();
+            slots++;
+            JudgeResult jr = mj.judgeMotion(ls);
+            String toSpeak = jr.getDescription();
+            score += jr.getScore();
             finished += mj.getCount(ls);
             if (!mute)
                 tts.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
-            appendToUI("" + (curSetCount + 1), String.valueOf(finished), (float) 66.88, false);
+            appendToUI("" + (curSetCount + 1), String.valueOf(finished), score/slots, false);
             ls.clear();
-            runner.postDelayed( this, 10000 );
-            if (finished >= GetByID.getRequiredRep(id))
+            runner.postDelayed(this, 10000);
+            if (finished >= requiredRep)
                 tts.speak("Mission complete! Please stop now.", TextToSpeech.QUEUE_FLUSH, null);
-            else if (finished > GetByID.getRequiredRep(id) / 2 && toSpeak == "Too Slow.")
+            else if (finished > requiredRep / 2 && toSpeak == "Too Slow.")
                 tts.speak("Carry on!", TextToSpeech.QUEUE_FLUSH, null);
         }
     };
@@ -111,7 +119,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // TODO: delete this & add a service!
         setContentView(R.layout.activity_exer2);
-
+        Toast.makeText(ExerActivity.this, "Start!", Toast.LENGTH_SHORT).show();
         Toolbar myToolbar = (Toolbar) findViewById(R.id.instr_toolbar);
         setSupportActionBar(myToolbar);
 
@@ -133,6 +141,10 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
         Bundle b = getIntent().getExtras();
         id = b.getInt("ID");
+        requiredRep = GetByID.getRequiredRep(id);
+        if (id == 3)
+            requiredRep = DBHelper.selectReq(getApplicationContext(), id);    // TODO: use this one and then delete getRequired
+            //Log.d("DB", String.valueOf(DBHelper.selectReq(getApplicationContext(), id)));
 
         TextView exerName = (TextView) findViewById(R.id.exercise_name);
         exerName.setText(GetByID.getExerName(id));
@@ -181,8 +193,8 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 runner.removeCallbacks(testExer);
                 recorder.removeCallbacks(writeArray);
 
-                // TODO: DB update and display score
-                appendToUI("" + (curSetCount + 1), String.valueOf(finished), (float) 66.88, false);
+                float curScore = score/slots;
+                appendToUI("" + (curSetCount + 1), String.valueOf(finished), curScore, false);
 
                 if (finished > 0) {
                     SQLiteDatabase db = dbHelper.getWritableDatabase(); // write access
@@ -190,7 +202,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
                     ContentValues values = new ContentValues();
                     values.put("formID", id);
                     values.put("reps", finished);
-                    values.put("score", 88.88); // TODO: Score
+                    values.put("score", curScore);
                     long rowId = db.insert("workout_history", null, values);
                 }
                 //Log.d( "rowId", "inserted " + rowId);
@@ -206,9 +218,10 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
     }
 
     private MotionJudge getMotionJudgerById(int formId){
-        if(formId==-1){
-            return new MotionJudgeSelfDefinedSpeedImpl(this.minFreq,this.maxFreq);
-        } else {
+        if(formId > 1){
+            return new MotionJudgeSelfDefinedSpeedImpl(this.minFreq, this.maxFreq);
+        }
+        else {
             return new MotionJudgeImpl(getMotionJudgeModelInputStream(id));
         }
 

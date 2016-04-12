@@ -11,14 +11,30 @@
         android:id="@+id/reps_per_set"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Reps per set" />
+        android:text="Reps per set: 15" />
 
     <SeekBar
         android:id="@+id/press_up_requirement"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:max="100"
-        android:progress="15"/>
+        android:progress="15"
+        android:progressDrawable="@drawable/bg_bar"/>
+
+    <TextView
+        android:id="@+id/freq"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Seconds per rep: 2" />
+
+    <SeekBar
+        android:id="@+id/frequency_requirement"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="6"
+        android:progress="2"
+        android:progressDrawable="@drawable/bg_bar"/>
+
     <Button
         android:id="@+id/push_up_save_button"
         android:layout_width="wrap_content"
@@ -29,4 +45,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="share"/>
+    <Button
+        android:id="@+id/get_finished_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="See my friend's progress"/>
 </LinearLayout>

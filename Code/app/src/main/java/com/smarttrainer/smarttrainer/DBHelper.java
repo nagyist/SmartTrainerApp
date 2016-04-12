@@ -1,8 +1,10 @@
 package com.smarttrainer.smarttrainer;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.TextView;
 
 /**
  * Created by ld on 3/10/16.
@@ -35,5 +37,16 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
         onUpgrade(db, oldVersion, newVersion);
+    }
+
+    public static int selectReq(Context context, int id)
+    {
+        DBHelper dbHelper = new DBHelper(context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String selectReqFreq = "SELECT repsReq FROM form_setting WHERE formID = ?";
+        Cursor cursor = db.rawQuery(selectReqFreq, new String[]{String.valueOf(id)});
+        if (cursor != null)
+            cursor.moveToFirst();
+        return cursor.getInt(0);
     }
 }
