@@ -64,6 +64,8 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private float minFreq = 0.2f;
     private float maxFreq = 0.5f;
 
+    private Bundle b;
+
     List<float[]> ls;
 
     Handler recorder = new Handler();
@@ -139,7 +141,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         txtStatus = (TextView) findViewById(R.id.txt_status);
         txtStatus.setText("Ready");
 
-        Bundle b = getIntent().getExtras();
+        b = getIntent().getExtras();
         id = b.getInt("ID");
         requiredRep = GetByID.getRequiredRep(id);
         if (id == 3) {
@@ -147,6 +149,8 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
             requiredRep = cursor.getInt(0);    // TODO: use this one and then delete getRequired
             //Log.d("DB", String.valueOf(DBHelper.selectReq(getApplicationContext(), id)));
             float freq = cursor.getFloat(1);
+            minFreq = freq / 2;
+            maxFreq = freq;
         }
 
         TextView exerName = (TextView) findViewById(R.id.exercise_name);
@@ -207,8 +211,12 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
                     values.put("reps", finished);
                     values.put("score", curScore);
                     long rowId = db.insert("workout_history", null, values);
+                    //Log.d( "rowId", "inserted " + rowId);
                 }
-                //Log.d( "rowId", "inserted " + rowId);
+                Toast.makeText(ExerActivity.this, "Workout saved!", Toast.LENGTH_SHORT).show();
+
+                if (b.getString("creator") != null && finished > b.getInt("Req"))
+                    Log.d("send request", b.getString("creator"));
             }
         });
 
@@ -333,7 +341,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
             public void run() {
                 curSet.setText(set);
                 curRep.setText(rep);
-                curScore.setText(score + "%");
+                curScore.setText(String.format("%.2f", score) + '%');
                 if (max)
                     prevBest.setText(score + "%");
             }

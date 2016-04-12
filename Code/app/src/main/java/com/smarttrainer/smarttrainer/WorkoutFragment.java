@@ -18,7 +18,6 @@ import android.widget.TextView;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -102,7 +101,7 @@ public class WorkoutFragment extends Fragment{
                 String[] forms = getResources().getStringArray(R.array.workout_array);
                 Cursor cursor = db.rawQuery(selectSet, new String[]{curMonth, String.valueOf(id)});
                 //Toast.makeText(getActivity(), "pos: " + pos + " id: " + id, Toast.LENGTH_SHORT).show();
-
+                //Log.d("cursor count ", String.valueOf(cursor.getCount()));
                 Timestamp timeStart = null, timeEnd = null;
                 int firstSet = 0;
                 int dailySet = 0;
@@ -173,7 +172,12 @@ public class WorkoutFragment extends Fragment{
                                 TimeUnit.MILLISECONDS.toSeconds(weeklyTotalTime) -
                                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(weeklyTotalTime))));
                     }
-
+                if (weeklyReps == 0)
+                {
+                    weeklyRep.setText("0");
+                    weeklyDay.setText("0");
+                    weeklyTime.setText("00:00:00");
+                }
                 /*HashMap<String, String> anthmap = new HashMap<String, String>();
                 anthmap.put("Day", "Monday");
                 mylist.add(anthmap);*/
@@ -231,10 +235,14 @@ public class WorkoutFragment extends Fragment{
     {
         long millis = timeEnd.getTime() - timeStart.getTime();
         millis += (3000 * firstSet);
+        Log.d("millis", "daily: " + millis);
         map.put("duration", String.format("%02d:%02d",
-                TimeUnit.MILLISECONDS.toHours(millis),
+                //TimeUnit.MILLISECONDS.toHours(millis),
                 TimeUnit.MILLISECONDS.toMinutes(millis) -
-                        TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis))));
+                        TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis))
+                , TimeUnit.MILLISECONDS.toSeconds(millis) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
+        ));
         return millis;
     }
     /*

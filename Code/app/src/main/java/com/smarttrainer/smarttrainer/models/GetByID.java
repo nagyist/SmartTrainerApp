@@ -1,5 +1,8 @@
 package com.smarttrainer.smarttrainer.models;
 
+import android.content.Context;
+
+import com.smarttrainer.smarttrainer.DBHelper;
 import com.smarttrainer.smarttrainer.R;
 
 /**
@@ -23,8 +26,8 @@ public class GetByID {
     {
         if (id == 1)
             return R.drawable.curl;
-        else if (id == 2)
-            return R.drawable.curl;     // TODO: sit-up drawable
+        else if (id == 3)
+            return R.drawable.pushup;     // TODO: sit-up drawable
         return R.drawable.bench_press_gif;
     }
 
@@ -58,6 +61,19 @@ public class GetByID {
             return 30;
         else if (id == 3)
             return 15;
+        return 0;
+    }
+
+    public static float getRequiredSec(int id, Context context)
+    {
+        if (id == 0)
+            return 3;
+        else if (id == 1)
+            return 4;
+        else if (id == 2)
+            return 1;
+        else if (id == 3)
+            return DBHelper.selectReq(context, id).getInt(0);
         return 0;
     }
 }

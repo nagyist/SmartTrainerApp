@@ -82,6 +82,20 @@ public class MainPageFrag extends Fragment {
             //https://www.learn2crack.com/2013/10/android-custom-listview-images-text-example.html
             //http://www.androidinterview.com/android-custom-listview-with-image-and-text-using-arrayadapter/
 
+            LinearLayout startChallenge = (LinearLayout) view.findViewById(R.id.start_challenge);
+            startChallenge.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v) {
+                    Intent toInstr = new Intent();
+                    toInstr.putExtra("ID", 3);
+                    toInstr.putExtra("freq", 0.5);
+                    toInstr.putExtra("creator", "");
+                    toInstr.setClass(getActivity(), InstrActivity.class);
+                    startActivity(toInstr);
+                }
+            });
+
             LinearLayout benchPress = (LinearLayout) view.findViewById(R.id.bench_press_button);
             benchPress.setOnClickListener(new View.OnClickListener()
             {

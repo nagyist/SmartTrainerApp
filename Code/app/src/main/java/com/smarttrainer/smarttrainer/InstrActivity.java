@@ -52,7 +52,9 @@ public class InstrActivity extends AppCompatActivity {
     TextToSpeech tts;
     private TextView txtStatus;
     private BandClient client = null;
+    private Bundle b;
     private int id = 0;
+    private String sendBack;
     private static final UUID tileId = UUID.fromString("cc0D508F-70A3-47D4-BBA3-812BADB1F8Aa");
     private static final UUID pageId1 = UUID.fromString("b1234567-89ab-cdef-0123-456789abcd00");
 
@@ -74,8 +76,9 @@ public class InstrActivity extends AppCompatActivity {
             window.setStatusBarColor(Color.parseColor("#a20000"));
         }
 
-        Bundle b = getIntent().getExtras();
+        b = getIntent().getExtras();
         id = b.getInt("ID");
+        sendBack = b.getString("URL");
 
         TextView exerName = (TextView) findViewById(R.id.exer_name);
         exerName.setText(GetByID.getExerName(id));
@@ -206,7 +209,7 @@ public class InstrActivity extends AppCompatActivity {
                 }
 
                 Intent toExer = new Intent();
-                toExer.putExtra("ID", id);
+                toExer.putExtras(b);
                 toExer.setClass(InstrActivity.this, ExerActivity.class);
                 startActivity(toExer);
             }

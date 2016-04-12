@@ -3,7 +3,7 @@
     <string-array name="workout_array">
         <item>Bench Press</item>
         <item>Curl</item>
-        <item>Push-up</item>
         <item>Sit-up</item>
+        <item>Push-up</item>
     </string-array>
 </resources>

@@ -34,7 +34,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:background="@drawable/challenge_background">
+            android:background="@drawable/challenge_background"
+            android:id="@+id/start_challenge"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="onClick">
             <LinearLayout
                 android:layout_width="0px"
                 android:layout_height="match_parent"
@@ -235,7 +239,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:background="@drawable/benchpress3"
+            android:background="@drawable/situp2"
             android:paddingTop="@dimen/activity_horizontal_margin"
             android:layout_marginTop="@dimen/vertical_margin_sum"
             android:id="@+id/sit_up_button"
