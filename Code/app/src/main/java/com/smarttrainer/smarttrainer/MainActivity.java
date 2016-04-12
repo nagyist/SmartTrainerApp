@@ -20,17 +20,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (ExistingUser.getUserName(MainActivity.this).length() == 0){
+        /*if (ExistingUser.getUserName(MainActivity.this).length() == 0){
             Intent toLogin = new Intent();
             toLogin.setClass(MainActivity.this, LoginActivity.class);
             startActivityForResult(toLogin, 0);
         }
         else
-        {
+        {*/
             Intent toSum = new Intent();
             toSum.setClass(MainActivity.this, SumActivity.class);
             startActivity(toSum);
-        }
+        //}
         setContentView(R.layout.activity_main);
     }
 

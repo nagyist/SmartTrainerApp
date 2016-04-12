@@ -87,13 +87,61 @@ public class MainPageFrag extends Fragment {
             {
                 @Override
                 public void onClick(View v) {
-                    // TODO:
-                    /*Intent toInstr = new Intent();
-                    toInstr.putExtra("ID", 3); // formID
-                    toInstr.putExtra("freq", 0.5);  // freq
-                    toInstr.putExtra("creator", "");    
+
+                    String url = "http://52.3.117.15:8000/user/get_challenges_created_for_user?user_id=1575536576102601";
+//                    + ExistingUser.getUserName(MainPageFrag.this.getContext());
+                    // Instantiate the RequestQueue.
+                    RequestQueue queue = Volley.newRequestQueue(getActivity());
+                    Log.d("Volley", "URL: " + url);
+                    // Request a string response from the provided URL.
+                    StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    Log.d("Volley", "Get_USER_SUCCESS");
+                                    ArrayList<String> form_id = new ArrayList<>();
+                                    ArrayList<String> challenger = new ArrayList<>();
+                                    ArrayList<String> maxFreq = new ArrayList<>();
+                                    ArrayList<String> rep = new ArrayList<>();
+                                    try {
+                                        JSONObject jsonObject = new JSONObject(response);
+                                        JSONArray challenges = jsonObject.getJSONArray("challenges");
+                                        for (int i = 0; i < challenges.length(); i++) {
+                                            Log.d("JSON", "DEBUG");
+                                            form_id.add(challenges.getJSONObject(i).getString("form_id"));
+                                            challenger.add(challenges.getJSONObject(i).getString("challenger"));
+                                            maxFreq.add(challenges.getJSONObject(i).getString("max_frequency"));
+                                            rep.add(challenges.getJSONObject(i).getString("repetition"));
+                                        }
+                                    } catch (Exception e) {
+
+                                    }
+                                    DialogFragment newFragment = new ChallengeListFragment();
+                                    Bundle args = new Bundle();
+                                    args.putStringArrayList("form_id", form_id);
+                                    args.putStringArrayList("challenger", challenger);
+                                    args.putStringArrayList("maxFreq", maxFreq);
+                                    args.putStringArrayList("rep", rep);
+                                    newFragment.setArguments(args);
+                                    newFragment.show(getFragmentManager(), "dialog");
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.d("Volley", "GET_USER_FAILURE");
+                                }
+                            });
+                    // Add the request to the RequestQueue.
+                    queue.add(stringRequest);
+                    /**
+                    Intent toInstr = new Intent();
+                    toInstr.putExtra("ID", 3); // form ID
+                    toInstr.putExtra("freq", 0.5);
+                    toInstr.putExtra("creator", "");
                     toInstr.setClass(getActivity(), InstrActivity.class);
-                    startActivity(toInstr);*/
+                    startActivity(toInstr);
+                     */
                 }
             });
 
