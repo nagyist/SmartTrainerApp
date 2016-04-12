@@ -43,8 +43,8 @@ public class ChallengeListFragment extends DialogFragment {
         display = new ArrayList<>();
 
         for (int i = 0; i < form_id.size(); i++) {
-            display.add(challenger.get(i) + ": " + GetByID.getExerName(Integer.parseInt(form_id.get(i))) + "\n"
-                        + "Rep: " + rep.get(i) + "    " + "Freq: " + maxFreq.get(i));
+            display.add(challenger.get(i) + ":    " + GetByID.getExerName(Integer.parseInt(form_id.get(i))) + "\n"
+                        + "Rep: " + rep.get(i) + "       " + "Freq: " + maxFreq.get(i));
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

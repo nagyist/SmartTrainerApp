@@ -332,7 +332,7 @@ public class MainPageFrag extends Fragment {
                                             } else if(form_id==2){
                                                 form_name = "Push-up";
                                             } else{
-                                                form_name = "Sit-up";
+                                                form_name = "Push-up";
                                             }
                                             curChallengeStr+=(form_name+"  Score:");
                                             curChallengeStr+=(curChallenge.getString("score"));
