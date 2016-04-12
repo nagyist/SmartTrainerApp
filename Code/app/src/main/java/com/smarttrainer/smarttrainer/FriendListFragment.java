@@ -29,7 +29,7 @@ import java.util.List;
  * Created by luke on 4/11/16.
  */
 public class FriendListFragment extends DialogFragment {
-    ArrayList<Integer> id;
+    ArrayList<String> userID;
     ArrayList<String> name;
     int rep;
     double maxFreq;
@@ -38,7 +38,7 @@ public class FriendListFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
-        id = getArguments().getIntegerArrayList("id");
+        userID = getArguments().getStringArrayList("id");
         name = getArguments().getStringArrayList("name");
         rep = getArguments().getInt("rep");
         maxFreq = getArguments().getDouble("fre");
@@ -68,7 +68,7 @@ public class FriendListFragment extends DialogFragment {
                         + "&min_frequency=" + minFreq
                         + "&max_frequency=" + maxFreq
                         + "&repetition=" + rep
-                        + "&challengee=" + mSelectedItems.get(0);
+                        + "&challengee=" + userID.get(mSelectedItems.get(0));
 //                String url ="http://www.google.com";
                 Log.d("Volley", "URL: " + url);
                 // Request a string response from the provided URL.
@@ -76,13 +76,13 @@ public class FriendListFragment extends DialogFragment {
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                Log.d("Volley", "Success");
+                                Log.d("Volley", "Send challenge successfully");
                             }
                         },
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                Log.d("Volley", "Failure");
+                                Log.d("Volley", "Fail to send challenge");
                             }
                         });
                 // Add the request to the RequestQueue.

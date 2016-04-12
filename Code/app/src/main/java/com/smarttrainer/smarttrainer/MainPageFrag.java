@@ -196,14 +196,14 @@ public class MainPageFrag extends Fragment {
                                 @Override
                                 public void onResponse(String response) {
                                     Log.d("Volley", "Get_USER_SUCCESS");
-                                    ArrayList<Integer> id = new ArrayList<>();
+                                    ArrayList<String> id = new ArrayList<>();
                                     ArrayList<String> name = new ArrayList<>();
                                     try {
                                         JSONObject jsonObject = new JSONObject(response);
                                         JSONArray users = jsonObject.getJSONArray("users");
                                         for (int i = 0; i < users.length(); i++) {
                                             Log.d("JSON", "DEBUG");
-                                            id.add(users.getJSONObject(i).getInt("user_id"));
+                                            id.add(users.getJSONObject(i).getString("user_id"));
                                             name.add(users.getJSONObject(i).getString("name"));
                                         }
                                     } catch (Exception e) {
@@ -213,7 +213,7 @@ public class MainPageFrag extends Fragment {
                                     Bundle args = new Bundle();
                                     args.putInt("rep", pushUpRepReq);
                                     args.putDouble("fre", 1.0 / secPerPushReq);
-                                    args.putIntegerArrayList("id", id);
+                                    args.putStringArrayList("id", id);
                                     args.putStringArrayList("name", name);
                                     newFragment.setArguments(args);
                                     newFragment.show(getFragmentManager(), "dialog");
