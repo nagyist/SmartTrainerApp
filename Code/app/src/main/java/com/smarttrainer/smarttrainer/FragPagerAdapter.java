@@ -10,7 +10,7 @@ import android.support.v4.app.FragmentPagerAdapter;
  */
 public class FragPagerAdapter extends FragmentPagerAdapter {
     final int PAGE_COUNT = 3;
-    private String tabTitles[] = new String[] { "EXERCISE", "PROFILE", "SUMMARY" };
+    private String tabTitles[] = new String[] { "EXERCISE", "CHALLENGE", "SUMMARY" };
     private Context context;
 
     public FragPagerAdapter(FragmentManager fm, Context context) {

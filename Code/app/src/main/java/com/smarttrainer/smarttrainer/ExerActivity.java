@@ -118,7 +118,7 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
             ls.clear();
             runner.postDelayed(this, 10000);
             if (finished >= requiredRep)
-                tts.speak("Mission complete! Please stop now.", TextToSpeech.QUEUE_FLUSH, null);
+                tts.speak("Mission complete! Please press stop now.", TextToSpeech.QUEUE_FLUSH, null);
             else if (finished > requiredRep / 2 && toSpeak == "Too Slow.")
                 tts.speak("Carry on!", TextToSpeech.QUEUE_FLUSH, null);
         }
@@ -238,8 +238,8 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
                             new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
-                                    //Log.d("debugging", "to server success");
-                                    Toast.makeText(getApplicationContext(), "Challenge: " + response.toString(),Toast.LENGTH_SHORT).show();
+                                    //Log.d("debugging", response.toString());
+                                    Toast.makeText(getApplicationContext(), "Your friend can see it now!", Toast.LENGTH_SHORT).show();
                                 }
                             },
                             new Response.ErrorListener() {
