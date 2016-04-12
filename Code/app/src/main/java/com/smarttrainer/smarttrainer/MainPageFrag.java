@@ -88,8 +88,8 @@ public class MainPageFrag extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                    String url = "http://52.3.117.15:8000/user/get_challenges_created_for_user?user_id=1575536576102601";
-//                    + ExistingUser.getUserName(MainPageFrag.this.getContext());
+                    String url = "http://52.3.117.15:8000/user/get_challenges_created_for_user?user_id="
+                    + ExistingUser.getUserName(MainPageFrag.this.getContext());
                     // Instantiate the RequestQueue.
                     RequestQueue queue = Volley.newRequestQueue(getActivity());
                     Log.d("Volley", "URL: " + url);
@@ -101,6 +101,7 @@ public class MainPageFrag extends Fragment {
                                     Log.d("Volley", "Get_USER_SUCCESS");
                                     ArrayList<String> form_id = new ArrayList<>();
                                     ArrayList<String> challenger = new ArrayList<>();
+                                    ArrayList<String> challengerID = new ArrayList<>();
                                     ArrayList<String> maxFreq = new ArrayList<>();
                                     ArrayList<String> rep = new ArrayList<>();
                                     try {
@@ -110,6 +111,7 @@ public class MainPageFrag extends Fragment {
                                             Log.d("JSON", "DEBUG");
                                             form_id.add(challenges.getJSONObject(i).getString("form_id"));
                                             challenger.add(challenges.getJSONObject(i).getString("challenger"));
+                                            challengerID.add(challenges.getJSONObject(i).getString("challenger_id"));
                                             maxFreq.add(challenges.getJSONObject(i).getString("max_frequency"));
                                             rep.add(challenges.getJSONObject(i).getString("repetition"));
                                         }
@@ -120,6 +122,7 @@ public class MainPageFrag extends Fragment {
                                     Bundle args = new Bundle();
                                     args.putStringArrayList("form_id", form_id);
                                     args.putStringArrayList("challenger", challenger);
+                                    args.putStringArrayList("challengerID", challengerID);
                                     args.putStringArrayList("maxFreq", maxFreq);
                                     args.putStringArrayList("rep", rep);
                                     newFragment.setArguments(args);
@@ -319,7 +322,7 @@ public class MainPageFrag extends Fragment {
                                         for(int i=0;i<challenges.length();i++){
                                             JSONObject curChallenge = challenges.getJSONObject(i);
                                             String curChallengeStr = "";
-                                            curChallengeStr+=(curChallenge.getString("challengee")+":   ");
+                                            curChallengeStr+=(curChallenge.getString("challengee").split(" ")[0]+":   ");
                                             int form_id = curChallenge.getInt("form_id");
                                             String form_name = "";
                                             if(form_id==0){
