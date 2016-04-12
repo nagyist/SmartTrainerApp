@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTabHost;
 import android.util.Log;
@@ -176,7 +177,11 @@ public class MainPageFrag extends Fragment {
             sharePressUp.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    DialogFragment newFragment = new FriendListFragment();
+                    Bundle args = new Bundle();
+                    args.putInt("rep", pushUpRepReq);
+                    newFragment.setArguments(args);
+                    newFragment.show(getFragmentManager(), "dialog");
                 }
             });
 
