@@ -87,12 +87,13 @@ public class MainPageFrag extends Fragment {
             {
                 @Override
                 public void onClick(View v) {
-                    Intent toInstr = new Intent();
-                    toInstr.putExtra("ID", 3);
-                    toInstr.putExtra("freq", 0.5);
-                    toInstr.putExtra("creator", "");
+                    // TODO:
+                    /*Intent toInstr = new Intent();
+                    toInstr.putExtra("ID", 3); // formID
+                    toInstr.putExtra("freq", 0.5);  // freq
+                    toInstr.putExtra("creator", "");    
                     toInstr.setClass(getActivity(), InstrActivity.class);
-                    startActivity(toInstr);
+                    startActivity(toInstr);*/
                 }
             });
 
