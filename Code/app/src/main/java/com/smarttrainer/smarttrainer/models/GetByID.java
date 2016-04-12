@@ -26,6 +26,8 @@ public class GetByID {
     {
         if (id == 1)
             return R.drawable.curl;
+        if (id == 2)
+            return R.drawable.situp;
         else if (id == 3)
             return R.drawable.pushup;     // TODO: sit-up drawable
         return R.drawable.bench_press_gif;
