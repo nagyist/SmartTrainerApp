@@ -1,5 +1,6 @@
 package com.smarttrainer.smarttrainer;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,8 +12,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -70,7 +73,7 @@ public class MainPageFrag extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         if (pageN == 1)
         {
@@ -234,7 +237,64 @@ public class MainPageFrag extends Fragment {
             getFinishedList.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    String url = "http://52.3.117.15:8000/user/get_challenges_created_by_user?user_id="+
+                            ExistingUser.getUserName(v.getContext());
+                    // Instantiate the RequestQueue.
+                    RequestQueue queue = Volley.newRequestQueue(getActivity());
+                    Log.d("Volley", "URL: " + url);
+                    // Request a string response from the provided URL.
+                    StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    Log.d("Volley", "Get_USER_SUCCESS");
+                                    try {
+                                        JSONObject jsonObject = new JSONObject(response);
+                                        JSONArray challenges = jsonObject.getJSONArray("challenges");
+//                                        ArrayList<String> form_names = new ArrayList<String>();
+                                        ArrayList<String> friend_names = new ArrayList<String>();
+//                                        double[] scores = new double[challenges.length()];
+                                        for(int i=0;i<challenges.length();i++){
+                                            JSONObject curChallenge = challenges.getJSONObject(i);
+                                            String curChallengeStr = "";
+                                            curChallengeStr+=(curChallenge.getString("challengee")+":   ");
+                                            int form_id = curChallenge.getInt("form_id");
+                                            String form_name = "";
+                                            if(form_id==0){
+                                                form_name = "Bench Press";
+                                            } else if(form_id==1){
+                                                form_name = "Curl";
+                                            } else if(form_id==2){
+                                                form_name = "Push-up";
+                                            } else{
+                                                form_name = "Sit-up";
+                                            }
+                                            curChallengeStr+=(form_name+"  Score:");
+                                            curChallengeStr+=(curChallenge.getString("score"));
+                                            friend_names.add(curChallengeStr);
+                                        }
+                                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainPageFrag.this.getActivity());
+                                        LayoutInflater inflater = getLayoutInflater(savedInstanceState);
+                                        View convertView = (View) inflater.inflate(R.layout.list, null);
+                                        alertDialog.setView(convertView);
+                                        alertDialog.setTitle("Challenges");
+                                        ListView lv = (ListView) convertView.findViewById(R.id.listView1);
+                                        ArrayAdapter<String> adapter = new ArrayAdapter<>(MainPageFrag.this.getContext(),android.R.layout.simple_list_item_1,friend_names);
+                                        lv.setAdapter(adapter);
+                                        alertDialog.show();
+                                    } catch (Exception e) {
+                                        Log.d("Get friend's progress", e.toString());
+                                    }
 
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.d("Volley", "GET_USER_FAILURE");
+                                }
+                            });
+                            queue.add(stringRequest);
                 }
             });
             return view;

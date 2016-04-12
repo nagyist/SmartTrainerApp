@@ -121,7 +121,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 setResult(RESULT_OK, sendBack);
                 Log.d("debugging", "id:" + loginResult.getAccessToken().getUserId() + " &token="
                         + loginResult.getAccessToken().getToken());
-                String loginUrl = "http://smarttrainer.ddns.net:8000/user/login?user_id="
+                String loginUrl = "http://52.3.117.15:8000/user/login?user_id="
                         + loginResult.getAccessToken().getUserId() + "&token="
                         + loginResult.getAccessToken().getToken() + "&service=facebook";
                 RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.this);
