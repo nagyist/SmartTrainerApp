@@ -17,8 +17,16 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.smarttrainer.smarttrainer.models.GetByID;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
@@ -169,19 +177,56 @@ public class MainPageFrag extends Fragment {
                     Toast.makeText(getActivity(), "Successfully saved in database", Toast.LENGTH_SHORT).show();
                     final DBHelper dbHelper = new DBHelper(getContext());
                     SQLiteDatabase db = dbHelper.getReadableDatabase();
-                    db.execSQL("UPDATE form_setting set repsReq=?, freq=? WHERE formID=3", new Object[]{pushUpRepReq, 1/secPerPushReq});
+                    db.execSQL("UPDATE form_setting set repsReq=?, freq=? WHERE formID=3", new Object[]{pushUpRepReq, 1 / secPerPushReq});
                 }
             });
 
             Button sharePressUp = (Button) view.findViewById(R.id.share_press_up);
+
             sharePressUp.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DialogFragment newFragment = new FriendListFragment();
-                    Bundle args = new Bundle();
-                    args.putInt("rep", pushUpRepReq);
-                    newFragment.setArguments(args);
-                    newFragment.show(getFragmentManager(), "dialog");
+                    String url = "http://52.3.117.15:8000/user/get_all_users";
+                    // Instantiate the RequestQueue.
+                    RequestQueue queue = Volley.newRequestQueue(getActivity());
+                    Log.d("Volley", "URL: " + url);
+                    // Request a string response from the provided URL.
+                    StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    Log.d("Volley", "Get_USER_SUCCESS");
+                                    ArrayList<Integer> id = new ArrayList<>();
+                                    ArrayList<String> name = new ArrayList<>();
+                                    try {
+                                        JSONObject jsonObject = new JSONObject(response);
+                                        JSONArray users = jsonObject.getJSONArray("users");
+                                        for (int i = 0; i < users.length(); i++) {
+                                            Log.d("JSON", "DEBUG");
+                                            id.add(users.getJSONObject(i).getInt("user_id"));
+                                            name.add(users.getJSONObject(i).getString("name"));
+                                        }
+                                    } catch (Exception e) {
+
+                                    }
+                                    DialogFragment newFragment = new FriendListFragment();
+                                    Bundle args = new Bundle();
+                                    args.putInt("rep", pushUpRepReq);
+                                    args.putDouble("fre", 1.0 / secPerPushReq);
+                                    args.putIntegerArrayList("id", id);
+                                    args.putStringArrayList("name", name);
+                                    newFragment.setArguments(args);
+                                    newFragment.show(getFragmentManager(), "dialog");
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.d("Volley", "GET_USER_FAILURE");
+                                }
+                            });
+                    // Add the request to the RequestQueue.
+                    queue.add(stringRequest);
                 }
             });
 

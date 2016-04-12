@@ -29,56 +29,22 @@ import java.util.List;
  * Created by luke on 4/11/16.
  */
 public class FriendListFragment extends DialogFragment {
-    ArrayList<Integer> id = new ArrayList<>();
-    ArrayList<String> name = new ArrayList<>();
+    ArrayList<Integer> id;
+    ArrayList<String> name;
+    int rep;
+    double maxFreq;
+    double minFreq;
     List<Integer> mSelectedItems = new ArrayList<>();  // Where we track the selected items
-    boolean ready = false;
+
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
-
-
-        String url = "http://52.3.117.15:8000/user/get_all_users";
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
-        Log.d("Volley", "URL: " + url);
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("Volley", "Get_USER_SUCCESS");
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            JSONArray users = jsonObject.getJSONArray("users");
-                            for (int i = 0; i < users.length(); i++) {
-                                Log.d("JSON", "DEBUG");
-                                id.add(users.getJSONObject(i).getInt("user_id"));
-                                name.add(users.getJSONObject(i).getString("name"));
-                            }
-                            ready = true;
-                        } catch (Exception e) {
-
-                        }
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("Volley", "GET_USER_FAILURE");
-                    }
-                });
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
-
-        for (int i = 0; i < name.size(); i++) {
-            Log.d("name", name.get(i));
-        }
+        id = getArguments().getIntegerArrayList("id");
+        name = getArguments().getStringArrayList("name");
+        rep = getArguments().getInt("rep");
+        maxFreq = getArguments().getDouble("fre");
+        minFreq = maxFreq / 2;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        while(!ready){
-            SystemClock.sleep(1000);
-        }
         builder.setTitle("Pick Friends")
                 .setMultiChoiceItems(name.toArray(new String[0]), null, new DialogInterface.OnMultiChoiceClickListener() {
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
@@ -97,12 +63,12 @@ public class FriendListFragment extends DialogFragment {
                 // Instantiate the RequestQueue.
                 RequestQueue queue = Volley.newRequestQueue(getActivity());
                 String url = "http://52.3.117.15:8000/user/create_challenge?"
-                        + "challenger=" + "4"
+                        + "challenger=" + ExistingUser.getUserName(FriendListFragment.this.getContext())
                         + "&form_id=" + "0"
-                        + "&min_frequency=" + "0.3"
-                        + "&max_frequency=" + "0.7"
-                        + "&repetition=" + getArguments().getInt("rep")
-                        + "&challengee=" + "1";
+                        + "&min_frequency=" + minFreq
+                        + "&max_frequency=" + maxFreq
+                        + "&repetition=" + rep
+                        + "&challengee=" + mSelectedItems.get(0);
 //                String url ="http://www.google.com";
                 Log.d("Volley", "URL: " + url);
                 // Request a string response from the provided URL.
