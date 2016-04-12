@@ -39,14 +39,14 @@ public class DBHelper extends SQLiteOpenHelper {
         onUpgrade(db, oldVersion, newVersion);
     }
 
-    public static int selectReq(Context context, int id)
+    public static Cursor selectReq(Context context, int id)
     {
         DBHelper dbHelper = new DBHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String selectReqFreq = "SELECT repsReq FROM form_setting WHERE formID = ?";
+        String selectReqFreq = "SELECT repsReq, freq FROM form_setting WHERE formID = ?";
         Cursor cursor = db.rawQuery(selectReqFreq, new String[]{String.valueOf(id)});
         if (cursor != null)
             cursor.moveToFirst();
-        return cursor.getInt(0);
+        return cursor;
     }
 }

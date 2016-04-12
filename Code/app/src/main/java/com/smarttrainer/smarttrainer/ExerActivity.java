@@ -142,9 +142,12 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
         Bundle b = getIntent().getExtras();
         id = b.getInt("ID");
         requiredRep = GetByID.getRequiredRep(id);
-        if (id == 3)
-            requiredRep = DBHelper.selectReq(getApplicationContext(), id);    // TODO: use this one and then delete getRequired
+        if (id == 3) {
+            Cursor cursor = DBHelper.selectReq(getApplicationContext(), id);
+            requiredRep = cursor.getInt(0);    // TODO: use this one and then delete getRequired
             //Log.d("DB", String.valueOf(DBHelper.selectReq(getApplicationContext(), id)));
+            float freq = cursor.getFloat(1);
+        }
 
         TextView exerName = (TextView) findViewById(R.id.exercise_name);
         exerName.setText(GetByID.getExerName(id));

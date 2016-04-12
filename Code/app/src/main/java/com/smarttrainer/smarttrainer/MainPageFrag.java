@@ -95,7 +95,7 @@ public class MainPageFrag extends Fragment {
 
 
             TextView pushUpReq = (TextView) view.findViewById(R.id.push_up_required);
-            pushUpReq.setText("1 set  " + DBHelper.selectReq(getContext(), 3) + " reps");
+            pushUpReq.setText("1 set  " + DBHelper.selectReq(getContext(), 3).getInt(0) + " reps");
 
             LinearLayout pushUp = (LinearLayout) view.findViewById(R.id.push_up_button);
             pushUp.setOnClickListener(new View.OnClickListener() {
