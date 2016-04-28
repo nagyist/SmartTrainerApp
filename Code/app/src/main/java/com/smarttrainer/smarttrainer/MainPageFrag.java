@@ -99,32 +99,36 @@ public class MainPageFrag extends Fragment {
                                 @Override
                                 public void onResponse(String response) {
                                     Log.d("Volley", "Get_USER_SUCCESS");
-                                    ArrayList<String> form_id = new ArrayList<>();
+                                    ArrayList<Integer> form_id = new ArrayList<>();
                                     ArrayList<String> challenger = new ArrayList<>();
                                     ArrayList<String> challengerID = new ArrayList<>();
-                                    ArrayList<String> maxFreq = new ArrayList<>();
-                                    ArrayList<String> rep = new ArrayList<>();
+                                    ArrayList<Float> maxFreq = new ArrayList<>();
+                                    ArrayList<Integer> rep = new ArrayList<>();
                                     try {
                                         JSONObject jsonObject = new JSONObject(response);
                                         JSONArray challenges = jsonObject.getJSONArray("challenges");
                                         for (int i = 0; i < challenges.length(); i++) {
                                             Log.d("JSON", "DEBUG");
-                                            form_id.add(challenges.getJSONObject(i).getString("form_id"));
+                                            form_id.add(challenges.getJSONObject(i).getInt("form_id"));
                                             challenger.add(challenges.getJSONObject(i).getString("challenger"));
                                             challengerID.add(challenges.getJSONObject(i).getString("challenger_id"));
-                                            maxFreq.add(challenges.getJSONObject(i).getString("max_frequency"));
-                                            rep.add(challenges.getJSONObject(i).getString("repetition"));
+                                            maxFreq.add((float)challenges.getJSONObject(i).getDouble("max_frequency"));
+                                            rep.add(challenges.getJSONObject(i).getInt("repetition"));
                                         }
                                     } catch (Exception e) {
 
                                     }
+                                    float[] floatMaxFeq = new float[maxFreq.size()];
+                                    for(int i=0;i<maxFreq.size();i++){
+                                        floatMaxFeq[i] = maxFreq.get(i);
+                                    }
                                     DialogFragment newFragment = new ChallengeListFragment();
                                     Bundle args = new Bundle();
-                                    args.putStringArrayList("form_id", form_id);
+                                    args.putIntegerArrayList("form_id", form_id);
                                     args.putStringArrayList("challenger", challenger);
                                     args.putStringArrayList("challengerID", challengerID);
-                                    args.putStringArrayList("maxFreq", maxFreq);
-                                    args.putStringArrayList("rep", rep);
+                                        args.putFloatArray("maxFreq",floatMaxFeq);
+                                    args.putIntegerArrayList("rep", rep);
                                     newFragment.setArguments(args);
                                     newFragment.show(getFragmentManager(), "dialog");
                                 }

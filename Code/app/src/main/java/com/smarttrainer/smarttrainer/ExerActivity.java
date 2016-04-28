@@ -159,6 +159,8 @@ public class ExerActivity extends AppCompatActivity implements TextToSpeech.OnIn
             minFreq = freq / 2;
             maxFreq = freq;
         }
+        if (b.getInt("rep") != 0)
+            requiredRep = b.getInt("rep");
         float tempFreq = b.getFloat("freq");
         if (tempFreq != 0f)
         {
