@@ -71,11 +71,11 @@ public class Workout extends Activity {
                     btnStart.setText("Stop");
                     writeToConsole("Start reading:");
                     new AccelerometerSubscriptionTask().execute();
-                    runner.postDelayed(writeLog, 50);
+                    runner.postDelayed(writeLog, 500);
                 } else {
                     try {
-                        client.getSensorManager().unregisterAccelerometerEventListener(mAccelerometerEventListener);
                         runner.removeCallbacks(writeLog);
+                        client.getSensorManager().unregisterAccelerometerEventListener(mAccelerometerEventListener);
                         writeToConsole("Stop reading.");
                         btnStart.setText("Start");
                     } catch (BandIOException e) {

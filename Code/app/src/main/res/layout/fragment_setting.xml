@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/exer_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Press-up setup"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:padding="12dp"
+        android:textColor="#000000"/>
+    <TextView
+        android:id="@+id/reps_per_set"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reps per set: 15" />
+
+    <SeekBar
+        android:id="@+id/press_up_requirement"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="15"
+        android:progressDrawable="@drawable/bg_bar"/>
+
+    <TextView
+        android:id="@+id/freq"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Seconds per rep: 2" />
+
+    <SeekBar
+        android:id="@+id/frequency_requirement"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="6"
+        android:progress="2"
+        android:progressDrawable="@drawable/bg_bar"
+        android:paddingBottom="@dimen/activity_horizontal_margin"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/activity_horizontal_margin"
+        android:paddingBottom="@dimen/activity_horizontal_margin">
+        <Button
+            android:id="@+id/push_up_save_button"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:background="@color/lightGray"
+            android:text="save"/>
+        <Button
+            android:id="@+id/share_press_up"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"
+            android:text="share"/>
+    </LinearLayout>
+
+    <Button
+        android:layout_margin="@dimen/activity_vertical_margin"
+        android:id="@+id/get_finished_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:text="See my friend's progress"
+        android:background="@color/lightGray"/>
+</LinearLayout>
